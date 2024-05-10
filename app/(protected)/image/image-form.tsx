@@ -13,25 +13,17 @@ import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { ChangeEvent } from "react";
 
-const ReminderForm = ({
-  username,
-  usernameSetter,
+const ImageForm = ({
   title,
   titleSetter,
-  goal,
-  goalSetter,
   completionStreak,
   completionStreakSetter,
   failureStreak,
   failureStreakSetter,
   onSubmit,
 }: {
-  username: string;
-  usernameSetter: (x: string) => void;
   title: string;
   titleSetter: (x: string) => void;
-  goal: string;
-  goalSetter: (x: string) => void;
   completionStreak: number;
   completionStreakSetter: (x: number) => void;
   failureStreak: number;
@@ -52,20 +44,11 @@ const ReminderForm = ({
   return (
     <Card className='w-[350px] animate-in'>
       <CardHeader>
-        <CardTitle>提醒訊息實驗室</CardTitle>
-        <CardDescription>調整參數以預覽效果</CardDescription>
+        <CardTitle>錫罐圖片實驗室</CardTitle>
+        <CardDescription>調整參數以預覽效果（圖片生成較久）</CardDescription>
       </CardHeader>
       <CardContent>
         <div className='grid w-full items-center gap-4'>
-          <div className='flex flex-col space-y-1.5'>
-            <Label htmlFor='username'>使用者名稱</Label>
-            <Input
-              id='username'
-              value={username}
-              onChange={onInputChange(usernameSetter)}
-              placeholder='使用者名稱'
-            />
-          </div>
           <div className='flex flex-col space-y-1.5'>
             <Label htmlFor='title'>習慣標題</Label>
             <Input
@@ -73,15 +56,6 @@ const ReminderForm = ({
               onChange={onInputChange(titleSetter)}
               id='title'
               placeholder='習慣標題'
-            />
-          </div>
-          <div className='flex flex-col space-y-1.5'>
-            <Label htmlFor='goal'>今日目標</Label>
-            <Input
-              value={goal}
-              onChange={onInputChange(goalSetter)}
-              id='goal'
-              placeholder='今日目標'
             />
           </div>
           <div className='flex flex-col space-y-3'>
@@ -117,4 +91,4 @@ const ReminderForm = ({
   );
 };
 
-export default ReminderForm;
+export default ImageForm;

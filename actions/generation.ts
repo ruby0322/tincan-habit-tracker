@@ -16,13 +16,13 @@ const askGPT = async (role: string, prompt: string): Promise<string> => {
 
 const generateHabitReminder = async (
   username: string,
-  projectName: string,
+  title: string,
   dailyGoal: string,
   completionSteak: number,
   failureStreak: number
 ) => {
   const prompt = `
-  Information: 你的主人的習慣計畫「${projectName}」要養成，他今天的短期目標是「${dailyGoal}」但還沒達成
+  Information: 你的主人的習慣計畫「${title}」要養成，他今天的短期目標是「${dailyGoal}」但還沒達成
   他已經連續 ${Math.max(completionSteak, failureStreak)} 天 ${
     completionSteak > 0 ? "達成" : "未達成"
   } 目標了！
@@ -34,4 +34,34 @@ const generateHabitReminder = async (
   );
 };
 
-export { askGPT, generateHabitReminder };
+const generateTinCanImage = async (
+  title: string,
+  completionSteak: number,
+  failureStreak: number
+) => {
+  const prompt = `Minimalism, 
+  kid's rough abstract line sketch of a half-opened tin can with big eyes and limbs,
+  pastel sticks,
+  messy simplicity thick and casual brush strokes,
+  fat,
+  sitting,
+  ${title},
+  ${
+    completionSteak != 0 || failureStreak != 0
+      ? completionSteak > 0
+        ? "happy"
+        : "sad"
+      : ""
+  }`;
+  console.log(prompt);
+  const response = await openai.images.generate({
+    model: "dall-e-3",
+    prompt,
+    n: 1,
+    size: "1024x1024",
+  });
+  console.log(response);
+  return response.data[0].url as string;
+};
+
+export { askGPT, generateHabitReminder, generateTinCanImage };
