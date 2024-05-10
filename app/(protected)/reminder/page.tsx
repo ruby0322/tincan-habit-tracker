@@ -1,7 +1,7 @@
 "use client";
 import { generateHabitReminder } from "@/actions/generation";
 import { useState } from "react";
-import { ReminderForm } from "./reminder-form";
+import ReminderForm from "./reminder-form";
 
 const ReminderPage = () => {
   const [response, setResponse] = useState<string>("");
