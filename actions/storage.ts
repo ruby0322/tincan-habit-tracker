@@ -17,4 +17,15 @@ const storeImageToStorage = async (blob: Blob) => {
   return publicUrl;
 };
 
-export { storeImageToStorage };
+const listStorageImageUrls = async () => {
+  const supabase = createClient();
+  const { data, error } = await supabase.storage.from("image").list();
+  return data?.map((storageImage) => {
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from("image").getPublicUrl(storageImage.name);
+    return publicUrl;
+  });
+};
+
+export { listStorageImageUrls, storeImageToStorage };

@@ -1,7 +1,7 @@
 "use server";
 
 import openai from "@/utils/openai";
-import { storeImageToStorage } from "./storage";
+import { listStorageImageUrls, storeImageToStorage } from "./storage";
 
 const askGPT = async (role: string, prompt: string): Promise<string> => {
   const completion = await openai.chat.completions.create({
@@ -29,6 +29,7 @@ const generateHabitReminder = async (
   } 目標了！
   Task: 以繁體中文撰寫 10 字內、疊字、情緒勒索、有少許 emoji 的訊息，提醒主人達成今日目標！
   `;
+  console.log(await listStorageImageUrls());
   return await askGPT(
     `你是一個可愛的「寵物錫罐」，主人是 ${username}。如果主人當日沒有完成目標，你就會感到難過`,
     prompt
