@@ -1,6 +1,7 @@
 "use server";
 
 import openai from "@/utils/openai";
+import { storeImageToStorage } from "./storage";
 
 const askGPT = async (role: string, prompt: string): Promise<string> => {
   const completion = await openai.chat.completions.create({
@@ -60,8 +61,11 @@ const generateTinCanImage = async (
     n: 1,
     size: "1024x1024",
   });
-  console.log(response);
-  return response.data[0].url as string;
+  console.log(response.data);
+  const res = await fetch(response.data[0].url as string);
+  const imageBlob = await res.blob();
+  const storageImageUrl = await storeImageToStorage(imageBlob);
+  return storageImageUrl;
 };
 
 export { askGPT, generateHabitReminder, generateTinCanImage };

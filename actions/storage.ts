@@ -1,0 +1,20 @@
+"use server";
+
+import { v4 as uuidv4 } from "uuid";
+
+import { createClient } from "@/utils/supabase/server";
+
+const storeImageToStorage = async (blob: Blob) => {
+  const supabase = createClient();
+  /* Upload picture to supabase storage */
+  const filename = `dalle-image-${uuidv4()}`;
+  await supabase.storage.from("image").upload(filename, blob);
+
+  /* Retrieve avatar URL */
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from("image").getPublicUrl(filename);
+  return publicUrl;
+};
+
+export { storeImageToStorage };
