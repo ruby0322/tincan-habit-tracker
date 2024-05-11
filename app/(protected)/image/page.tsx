@@ -1,5 +1,4 @@
 "use client";
-import { generateTinCanImage } from "@/actions/generation";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import { useState } from "react";
@@ -18,13 +17,31 @@ const ImagePage = () => {
     failureStreak: number
   ) => {
     setLoading(true);
-    const response = await generateTinCanImage(
-      title,
-      completionStreak,
-      failureStreak
-    );
-    setResponseUrl(response);
-    setLoading(false);
+    try {
+      const response = await fetch("/api/generation/image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          completionStreak,
+          failureStreak,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      setResponseUrl(data.imageUrl); // Assuming the server responds with { imageUrl: '...' }
+    } catch (error) {
+      console.error("Failed to fetch:", error);
+      setResponseUrl(""); // Handle error: reset response or set an error message
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
