@@ -11,6 +11,6 @@ export type RecordTable = Tables<"record">;
 
 export type DailyHabit = HabitTable & { num_completed_unit: number };
 export type HabitReport = HabitTable & {
-  records: { [date: string]: number }[];
+  records: { [date: string]: number };
 };
 export type PublicHabit = HabitTable & { joined_users: ProfileTable[] };
