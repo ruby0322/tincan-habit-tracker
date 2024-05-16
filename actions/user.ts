@@ -10,6 +10,9 @@ const getUserProfile = async (user_id: string): Promise<ProfileTable> => {
         .from('profile')
         .select('avatar_url, user_id, username')
         .eq('user_id', user_id)
+    if (error) {
+        throw new Error(`Error fetching posts: ${error.message}`);
+    }
     if (!data || data.length === 0) {
         throw new Error(`User with ID ${user_id} not found`);
     }
@@ -26,6 +29,9 @@ const getFollowers = async (user_id: string): Promise<ProfileTable[]> => {
             profile:profile!inner(user_id, avatar_url, username)
         `)
         .eq('following_id', user_id);
+    if (error) {
+        throw new Error(`Error fetching posts: ${error.message}`);
+    }
     if (!data || data.length === 0) {
         throw new Error(`No followers found for user with ID ${user_id}`);
     }
@@ -47,6 +53,9 @@ const getFollowings = async (user_id: string): Promise<ProfileTable[]> => {
             profile:profile!inner(user_id, avatar_url, username)
         `)
         .eq('follower_id', user_id);
+    if (error) {
+        throw new Error(`Error fetching posts: ${error.message}`);
+    }
     if (!data || data.length === 0) {
         throw new Error(`No followings found for user with ID ${user_id}`);
     }
@@ -65,6 +74,9 @@ const searchUser = async (username_substr: string): Promise<ProfileTable[]> => {
         .from('profile')
         .select('avatar_url, user_id, username')
         .like('username', '%Alba%')
+    if (error) {
+        throw new Error(`Error fetching posts: ${error.message}`);
+    }
     if (!data || data.length === 0) {
         throw new Error(`No user found`);
     }
@@ -77,6 +89,9 @@ const followUser = async (follower_id: string, following_id: string): Promise<bo
     const { error } = await supabase
         .from('follow')
         .insert({ follower_id: follower_id, following_id: following_id })
+    if (error) {
+        throw new Error(`Error fetching posts: ${error.message}`);
+    }
     return true;
 };
 
