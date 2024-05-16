@@ -1,10 +1,13 @@
 "use client";
 
-import Image from "next/image";
+import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const Header = () => {
+  const [username, setUsername] = useState<string>("");
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
   // Get current date and format it
   const today = new Date();
   const formattedDate = `${(today.getMonth() + 1)
@@ -22,7 +25,22 @@ const Header = () => {
       setTime(formattedTime);
     }, 1000);
 
-    return () => clearInterval(timer); // Clean up on component unmount
+    const getUserProfile = async () => {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { data: profiles } = await supabase
+        .from("profile")
+        .select()
+        .eq("user_id", user?.id);
+      if (profiles) {
+        setUsername(profiles[0].username);
+        setAvatarUrl(profiles[0].avatar_url);
+      }
+    };
+    getUserProfile();
+    return () => clearInterval(timer);
   }, []);
 
   return (
@@ -35,13 +53,10 @@ const Header = () => {
             <span>{time}</span> {/* Display the formatted time */}
           </div>
           <Link href='/profile'>
-            <Image
-              alt='Avatar'
-              className='rounded-full border'
-              height='48'
-              width='48'
-              src='https://dmbkhireuarjpvecjmds.supabase.co/storage/v1/object/public/image/dalle-image-1984271e-b00b-4b5a-8211-7617ed80ac56'
-            />
+            <Avatar>
+              <AvatarImage alt='@jaredpalmer' src={avatarUrl} />
+              <AvatarFallback>{username}</AvatarFallback>
+            </Avatar>
           </Link>
         </div>
       </div>
