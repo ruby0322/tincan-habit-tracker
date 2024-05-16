@@ -10,7 +10,14 @@ export type ReactToTable = Tables<"react_to">;
 export type RecordTable = Tables<"record">;
 
 export type DailyHabit = HabitTable & { num_completed_unit: number };
+export type LightHabit = {
+  habit_id: string;
+  title: string;
+};
 export type HabitReport = HabitTable & {
   records: { [date: string]: number };
 };
 export type PublicHabit = HabitTable & { joined_users: ProfileTable[] };
+export type PostWithReaction = PostTable & {
+  reaction: { [reaction_type]: ProfileTable[] };
+};
