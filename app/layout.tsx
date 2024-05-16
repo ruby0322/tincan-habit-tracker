@@ -3,7 +3,6 @@ import "./globals.css";
 
 import { Inter as FontSans } from "next/font/google";
 
-import Navbar from "@/components/navbar";
 import { cn } from "@/lib/utils";
 
 const fontSans = FontSans({
@@ -34,11 +33,8 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <main className='flex flex-col items-center justify-center'>
-          <Navbar />
-          <div className='w-full flex items-center justify-center h-[calc(100vh-64px)] overflow-auto'>
-            {children}
-          </div>
+        <main className='min-h-screen flex flex-col items-center justify-center light'>
+          {children}
         </main>
       </body>
     </html>
