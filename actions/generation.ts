@@ -19,13 +19,13 @@ const generateHabitReminder = async (
   username: string,
   title: string,
   dailyGoal: string,
-  completionSteak: number,
+  completionStreak: number,
   failureStreak: number
 ) => {
   const prompt = `
   Information: 你的主人的習慣計畫「${title}」要養成，他今天的短期目標是「${dailyGoal}」但還沒達成
-  他已經連續 ${Math.max(completionSteak, failureStreak)} 天 ${
-    completionSteak > 0 ? "達成" : "未達成"
+  他已經連續 ${Math.max(completionStreak, failureStreak)} 天 ${
+    completionStreak > 0 ? "達成" : "未達成"
   } 目標了！
   Task: 以繁體中文撰寫 10 字內、疊字、情緒勒索、有少許 emoji 的訊息，提醒主人達成今日目標！
   `;
@@ -38,7 +38,7 @@ const generateHabitReminder = async (
 
 const generateTinCanImage = async (
   title: string,
-  completionSteak: number,
+  completionStreak: number,
   failureStreak: number
 ) => {
   const prompt = `Minimalism, 
@@ -49,8 +49,8 @@ const generateTinCanImage = async (
   sitting,
   ${title},
   ${
-    completionSteak != 0 || failureStreak != 0
-      ? completionSteak > 0
+    completionStreak != 0 || failureStreak != 0
+      ? completionStreak > 0
         ? "happy"
         : "sad"
       : ""
@@ -69,4 +69,8 @@ const generateTinCanImage = async (
   return storageImageUrl;
 };
 
-export { askGPT, generateHabitReminder, generateTinCanImage };
+const test = async () => {
+  console.log("test");
+};
+
+export { askGPT, generateHabitReminder, generateTinCanImage, test };
