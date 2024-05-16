@@ -69,6 +69,21 @@ const generateTinCanImage = async (
   return storageImageUrl;
 };
 
+/* release 3 */
+
+/* 
+const generatePostContent = async (
+  username: string,
+  title: string,
+  dailyGoal: string,
+  completionStreak: number,
+  failureStreak: number
+) => {
+
+};
+
+*/
+
 const test = async () => {
   console.log("test");
 };
