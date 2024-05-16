@@ -1,7 +1,7 @@
-"use server";
+// "use server";
 
-import { HabitReport } from "@/type";
+// import { HabitReport } from "@/type";
 
-const getReport = async (habit_id: string): Promise<HabitReport> => {
-  /* your code should be placed here */
-};
+// const getReport = async (habit_id: string): Promise<HabitReport> => {
+//   /* your code should be placed here */
+// };
