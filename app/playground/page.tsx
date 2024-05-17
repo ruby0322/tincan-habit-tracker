@@ -85,7 +85,7 @@ export default async function Playground() {
         const report = await getReport(habitId);
         console.log("Successfully retrieved report!", report)
     };
-    await fetchReport();
+    // await fetchReport();
 
     return (
         <div>
