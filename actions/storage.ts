@@ -19,7 +19,7 @@ const storeImageToStorage = async (blob: Blob) => {
 
 const listStorageImageUrls = async () => {
   const supabase = createClient();
-  const { data, error } = await supabase.storage.from("image").list();
+  const { data } = await supabase.storage.from("image").list();
   return data?.map((storageImage) => {
     const {
       data: { publicUrl },
