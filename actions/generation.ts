@@ -69,18 +69,8 @@ const generateTinCanImage = async (
   return storageImageUrl;
 };
 
-export { askGPT, generateHabitReminder, generateTinCanImage };
-/* release 3 */
-
-/* 
-const generatePostContent = async (
-  username: string,
-  title: string,
-  dailyGoal: string,
-  completionStreak: number,
-  failureStreak: number
-) => {
-
+const test = async () => {
+  console.log("test");
 };
 
-*/
+export { askGPT, generateHabitReminder, generateTinCanImage, test };
