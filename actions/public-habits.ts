@@ -1,40 +1,85 @@
 "use server";
 
-import { PublicHabit } from "@/type";
+import { PublicHabit, HabitTable, ProfileTable } from "@/type";
 import { createClient } from "@/utils/supabase/server";
 
 const getPublicHabits = async (user_id: string): Promise<PublicHabit[]> => {
     const supabase = createClient();
-    const { data, error } = await supabase
-        .from('publish')
-        .select(`
-            *,
-            habit: habit_id (*)
-        `)
-        .eq('user_id', user_id);
 
-    if(error){
-        console.error("Error fetching all habits", error);
+    const { data: publishData, error: publishError} = await supabase
+        .from('publish')
+        .select('habit_id');
+    
+    if(publishError){
+        console.error("Error fetching publish habits", publishError);
         return [];
     }
 
-    return data.map(item=>({
-        ...item.habit,
-        joined_users: item.joined_users
+    const habitIds = publishData.map(p => p.habit_id);
+
+    if(habitIds.length === 0){
+        return [];
+    }
+
+    const { data: habitData, error: habitError } = await supabase
+        .from('habit')
+        .select('*')
+        .in('habit_id', habitIds);
+
+    if(habitError){
+        console.error("Error fetching habits", habitError);
+        return [];
+    }
+
+    const { data: profileData, error: profileError } = await supabase
+        .from('profile')
+        .select('user_id, username, avatar_url')
+    
+    if(profileError){
+        console.error("Error fetching profiles", profileError);
+        return [];
+    }
+
+    const habitProfilesMap: {[key: string]: ProfileTable[]} = habitIds.reduce((acc, habitId) => {
+        acc[habitId] = []
+        return acc;
+    }, {} as {[key: string]: ProfileTable[]});
+
+    profileData.forEach(profile => {
+        publishData.forEach(publishEntry => {
+            if(publishEntry.habit_id === profile.user_id){
+                habitProfilesMap[publishEntry.habit_id].push(profile);
+            }
+        });
+    });
+
+    return habitData.map(habit => ({
+        ...habit,
+        joined_users: habitProfilesMap[habit.habit_id] || [],
+        has_joined: habitProfilesMap[habit.habit_id]?.some(profile => profile.user_id === user_id) || false
     }));
 };
 
-const publishHabit = async (habit_id: string, user_id: string): Promise<boolean> => {
+const publishHabit = async (habit_id: string): Promise<boolean> => {
     const supabase = createClient();
-    const { error } = await supabase
-       .from('publish')
-       .insert({
-            user_id,
-            habit_id
-        });
+    // const { data: habitData, error: fetchError } = await supabase
+    //     .from('habit')
+    //     .select('creator_user_id')
+    //     .eq('habit_id', habit_id)
+    //     .single()
+    
+    // if(fetchError){
+    //     console.error("Error fetching habit", fetchError);
+    //     return false;
+    // }
+    
+    // const { creator_user_id: user_id } = habitData;
+    const { error: insertError } = await supabase
+        .from('publish')
+        .insert({habit_id});
 
-    if(error){
-        console.error("Error publishing habit", error);
+    if (insertError) {
+        console.error('Error publishing habit:', insertError);
         return false;
     }
 

@@ -17,7 +17,10 @@ export type LightHabit = {
 export type HabitReport = HabitTable & {
   records: { [date: string]: number };
 };
-export type PublicHabit = HabitTable & { joined_users: ProfileTable[] };
+export type PublicHabit = HabitTable & { 
+  joined_users: ProfileTable[],
+  has_joined: boolean
+};
 export type PostWithReaction = PostTable & {
   reaction: { [reaction_type]: ProfileTable[] };
 };
