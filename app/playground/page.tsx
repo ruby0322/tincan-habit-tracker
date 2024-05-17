@@ -1,23 +1,25 @@
 'use server'
 
 import { getDailyHabit, getLightHabits, createHabit, deleteHabit, getAllHabits } from "@/actions/habit";
+import { getPublicHabits, publishHabit, unpublishHabit, joinHabit } from "@/actions/public-habits";
+
 
 export default async function Playground() {
     
     let creator_user_id = "92a75107-0564-4dae-8be0-29665aaccf2b";
     let date = "2024-05-16";
-    let habitId = "3a16e62a-3d74-44f5-a06b-b86699763ea5"
+    let habitId = "1bc5c70b-5c5e-4a79-8954-184a12938b31"
 
     const fetchDailyHabits = async () => {
         const dailyHabits = await getDailyHabit(creator_user_id, date);
-        console.log("HI:", dailyHabits);
+        console.log("-----這是分隔線-----", dailyHabits);
     };
-    await fetchDailyHabits();
+    // await fetchDailyHabits();
 
-    // const fetchLightHabits = async () => {
-    //     const lightHabits = await getLightHabits(creator_user_id);
-    //     return (lightHabits);
-    // };
+    const fetchLightHabits = async () => {
+        const lightHabits = await getLightHabits(creator_user_id);
+        console.log("light habits: ", lightHabits);
+    };
     // await fetchLightHabits();
 
     const handleCreateHabit = async () => {
@@ -41,25 +43,48 @@ export default async function Playground() {
           },
         );
     };
-    await handleCreateHabit();
+    // await handleCreateHabit();
 
-    // const handleDeleteHabit = async () => {
-    //     const success = await deleteHabit(habitId);
-    // };
+    const handleDeleteHabit = async () => {
+        const success = await deleteHabit(habitId);
+        console.log("Successfully deleted!")
+    };
     // await handleDeleteHabit();
 
-    // const fetchAllHabits = async () => {
-    //     const allHabits = await getAllHabits(creator_user_id);
-    //     return (allHabits);
-    // };
+    const fetchAllHabits = async () => {
+        const allHabits = await getAllHabits(creator_user_id);
+        console.log("All Habits: ", allHabits);
+    };
     // await fetchAllHabits();
+
+    const fetchPublicHabit = async () => {
+        const publicHabits = await getPublicHabits(creator_user_id);
+        console.log("Public Habits: ", publicHabits);
+    }
+    // await fetchPublicHabit();
+
+    const handlePublishHabit = async () => {
+        const success = await publishHabit(habitId, creator_user_id);
+        console.log("Successfully published!")
+    };
+    // await handlePublishHabit();
+
+    const handleUnpublishHabit = async () => {
+        const success = await unpublishHabit(habitId);
+        console.log("Successfully unpublished!")
+    };
+    // await handleUnpublishHabit();
+
+    const handleJoinHabit = async () => {
+        const success = await joinHabit(creator_user_id, habitId);
+        console.log("Successfully joined!")
+    }
+    // await handleJoinHabit();
 
     return (
         <div>
-            <h1>Playground</h1>
-            <div>
-                <h2>Get Daily Habits</h2>
-            </div>
+            <h1>去 CMoney 實習可以帶顧寬証嗎</h1>
+            <div>Testing</div>
         </div>
     );
 }
