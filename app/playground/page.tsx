@@ -2,7 +2,7 @@
 
 import { getDailyHabit, getLightHabits, createHabit, deleteHabit, getAllHabits } from "@/actions/habit";
 import { getPublicHabits, publishHabit, unpublishHabit, joinHabit } from "@/actions/public-habits";
-
+import { getReport } from "@/actions/report";
 
 export default async function Playground() {
     
@@ -80,6 +80,12 @@ export default async function Playground() {
         console.log("Successfully joined!")
     }
     // await handleJoinHabit();
+
+    const fetchReport = async () => {
+        const report = await getReport(habitId);
+        console.log("Successfully retrieved report!", report)
+    };
+    await fetchReport();
 
     return (
         <div>
