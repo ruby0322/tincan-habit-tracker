@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const SocialPage = () => {
   return (
-    <Tabs defaultValue='account' className='w-full px-4 border-0'>
+    <Tabs defaultValue='friends' className='w-full p-4 border-0'>
       <div className='w-full h-full'>
         <TabsList className='grid w-full grid-cols-2'>
           <TabsTrigger value='friends'>朋友動態</TabsTrigger>
