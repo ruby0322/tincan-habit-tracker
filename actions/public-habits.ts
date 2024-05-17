@@ -24,17 +24,29 @@ const getPublicHabits = async (user_id: string): Promise<PublicHabit[]> => {
     }));
 };
 
-const publishHabit = async (habit_id: string, user_id: string): Promise<boolean> => {
+const publishHabit = async (habit_id: string): Promise<boolean> => {
     const supabase = createClient();
-    const { error } = await supabase
-       .from('publish')
-       .insert({
-            user_id,
-            habit_id
+    const { data: habitData, error: fetchError } = await supabase
+        .from('habit')
+        .select('creator_user_id')
+        .eq('habit_id', habit_id)
+        .single()
+    
+    if(fetchError){
+        console.error("Error fetching habit", fetchError);
+        return false;
+    }
+    
+    const { creator_user_id: user_id } = habitData;
+    const { error: insertError } = await supabase
+        .from('publish')
+        .insert({
+            habit_id,
+            user_id
         });
 
-    if(error){
-        console.error("Error publishing habit", error);
+    if (insertError) {
+        console.error('Error publishing habit:', insertError);
         return false;
     }
 
