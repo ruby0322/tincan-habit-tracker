@@ -15,7 +15,7 @@ const getMyPosts = async (user_id: string): Promise<PostTable[]> => {
         throw new Error(`Error fetching posts: ${error.message}`);
     }
     if (!data || data.length === 0) {
-        throw new Error(`No post posted by ${user_id}`);
+        return [];
     }
     return data;
 };
@@ -31,7 +31,7 @@ const getOtherPosts = async (user_id: string): Promise<PostTable[]> => {
         throw new Error(`Error fetching posts: ${error.message}`);
     }
     if (!data || data.length === 0) {
-        throw new Error(`No other posts`);
+        return [];
     }
     return data;
 };
@@ -49,7 +49,7 @@ const createPost = async (
         .from('post')
         .insert({ post_id: post_id, creator_user_id: creator_user_id, habit_id: habit_id,  post_time: post_time, content: content})
     if (error) {
-        throw new Error(`Error fetching posts: ${error.message}`);
+        throw new Error(`Error creating post: ${error.message}`);
     }
     return true;
 };
@@ -60,9 +60,9 @@ const deletePost = async (post_id: string): Promise<boolean> => {
     const { error } = await supabase
         .from('post')
         .delete()
-        .eq(post_id, post_id)
+        .eq('post_id', post_id)
     if (error) {
-        throw new Error(`Error fetching posts: ${error.message}`);
+        throw new Error(`Error deleting post: ${error.message}`);
     }
     return true;
 };

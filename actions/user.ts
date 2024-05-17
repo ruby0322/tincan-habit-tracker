@@ -11,7 +11,7 @@ const getUserProfile = async (user_id: string): Promise<ProfileTable> => {
         .select('avatar_url, user_id, username')
         .eq('user_id', user_id)
     if (error) {
-        throw new Error(`Error fetching posts: ${error.message}`);
+        throw new Error(`Error fetching user profile: ${error.message}`);
     }
     if (!data || data.length === 0) {
         throw new Error(`User with ID ${user_id} not found`);
@@ -30,10 +30,10 @@ const getFollowers = async (user_id: string): Promise<ProfileTable[]> => {
         `)
         .eq('following_id', user_id);
     if (error) {
-        throw new Error(`Error fetching posts: ${error.message}`);
+        throw new Error(`Error fetching followers: ${error.message}`);
     }
     if (!data || data.length === 0) {
-        throw new Error(`No followers found for user with ID ${user_id}`);
+        return [];
     }
     const profiles: ProfileTable[] = data.map(item => ({
         user_id: item.profile[0].user_id,
@@ -54,10 +54,10 @@ const getFollowings = async (user_id: string): Promise<ProfileTable[]> => {
         `)
         .eq('follower_id', user_id);
     if (error) {
-        throw new Error(`Error fetching posts: ${error.message}`);
+        throw new Error(`Error fetching followings: ${error.message}`);
     }
     if (!data || data.length === 0) {
-        throw new Error(`No followings found for user with ID ${user_id}`);
+        return [];
     }
     const profiles: ProfileTable[] = data.map(item => ({
         user_id: item.profile[0].user_id,
@@ -73,12 +73,12 @@ const searchUser = async (username_substr: string): Promise<ProfileTable[]> => {
     const { data, error } = await supabase
         .from('profile')
         .select('avatar_url, user_id, username')
-        .like('username', '%Alba%')
+        .like('username', `%${username_substr}%`);
     if (error) {
-        throw new Error(`Error fetching posts: ${error.message}`);
+        throw new Error(`Error searching users: ${error.message}`);
     }
     if (!data || data.length === 0) {
-        throw new Error(`No user found`);
+        return [];
     }
     return data;
 };
@@ -90,7 +90,7 @@ const followUser = async (follower_id: string, following_id: string): Promise<bo
         .from('follow')
         .insert({ follower_id: follower_id, following_id: following_id })
     if (error) {
-        throw new Error(`Error fetching posts: ${error.message}`);
+        throw new Error(`Error following user: ${error.message}`);
     }
     return true;
 };
