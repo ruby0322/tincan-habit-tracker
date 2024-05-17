@@ -1,14 +1,13 @@
-"user server";
+'use server';
 
 import { ProfileTable } from "@/type";
 import { createClient } from "@/utils/supabase/server";
-
+// OK
 const getUserProfile = async (user_id: string): Promise<ProfileTable> => {
-    /* your code should be placed here */
     const supabase = createClient();
     const { data, error } = await supabase
         .from('profile')
-        .select('avatar_url, user_id, username')
+        .select('*')
         .eq('user_id', user_id)
     if (error) {
         throw new Error(`Error fetching user profile: ${error.message}`);
@@ -18,55 +17,44 @@ const getUserProfile = async (user_id: string): Promise<ProfileTable> => {
     }
     return data[0] as ProfileTable;
 };
-
+// OK
 const getFollowers = async (user_id: string): Promise<ProfileTable[]> => {
-    /* your code should be placed here */
     const supabase = createClient();
     const { data, error } = await supabase
         .from('follow')
         .select(`
-            follower_id, 
-            profile:profile!inner(user_id, avatar_url, username)
+            profile:follower_id(*)
         `)
-        .eq('following_id', user_id);
+        .eq('following_id', user_id)
+        .returns<ProfileTable[]>();
     if (error) {
         throw new Error(`Error fetching followers: ${error.message}`);
     }
-    if (!data || data.length === 0) {
+    if (!data|| data.length === 0) {
         return [];
     }
-    const profiles: ProfileTable[] = data.map(item => ({
-        user_id: item.profile[0].user_id,
-        avatar_url: item.profile[0].avatar_url,
-        username: item.profile[0].username
-    }));
-    return profiles;
+    return data;
 };
 
+// OK
 const getFollowings = async (user_id: string): Promise<ProfileTable[]> => {
-    /* your code should be placed here */
     const supabase = createClient();
     const { data, error } = await supabase
         .from('follow')
         .select(`
-            following_id, 
-            profile:profile!inner(user_id, avatar_url, username)
+        profile:following_id(*)
         `)
-        .eq('follower_id', user_id);
+        .eq('follower_id', user_id)
+        .returns<ProfileTable[]>();
     if (error) {
         throw new Error(`Error fetching followings: ${error.message}`);
     }
     if (!data || data.length === 0) {
         return [];
     }
-    const profiles: ProfileTable[] = data.map(item => ({
-        user_id: item.profile[0].user_id,
-        avatar_url: item.profile[0].avatar_url,
-        username: item.profile[0].username
-    }));
-    return profiles;
+    return data;
 };
-
+// OK
 const searchUser = async (username_substr: string): Promise<ProfileTable[]> => {
     /* your code should be placed here */
     const supabase = createClient();
@@ -82,15 +70,33 @@ const searchUser = async (username_substr: string): Promise<ProfileTable[]> => {
     }
     return data;
 };
-
+// OK
 const followUser = async (follower_id: string, following_id: string): Promise<boolean> => {
-    /* your code should be placed here */
     const supabase = createClient();
-    const { error } = await supabase
+    const {data, error} = await supabase
         .from('follow')
-        .insert({ follower_id: follower_id, following_id: following_id })
+        .select()
+        .eq('follower_id', follower_id)
+        .eq('following_id', following_id);
     if (error) {
-        throw new Error(`Error following user: ${error.message}`);
+        throw new Error(`Error fetching follow data`);
+    }
+    if(!data || data.length == 0){
+       const { error } = await supabase
+        .from('follow')
+        .insert({ 'follower_id': follower_id, 'following_id': following_id }) ;
+        if (error) {
+            throw new Error(`Error following user: ${error.message}`);
+        }
+    }
+    else{
+        const { error } = await supabase
+        .from('follow')
+        .delete()
+        .match({ follower_id: follower_id, following_id: following_id });
+        if (error) {
+            throw new Error(`Error unfollowing user: ${error.message}`);
+        }
     }
     return true;
 };
