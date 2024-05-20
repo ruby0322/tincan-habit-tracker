@@ -56,7 +56,6 @@ const getFollowings = async (user_id: string): Promise<ProfileTable[]> => {
 };
 // OK
 const searchUser = async (username_substr: string): Promise<ProfileTable[]> => {
-    /* your code should be placed here */
     const supabase = createClient();
     const { data, error } = await supabase
         .from('profile')
@@ -100,5 +99,73 @@ const followUser = async (follower_id: string, following_id: string): Promise<bo
     }
     return true;
 };
+// OK
+const createProfile = async (user_id: string): Promise<boolean> => {
+    try {
+        const supabase = createClient();
+        const {
+            data: { user },
+            error: authError
+        } = await supabase.auth.getUser();
 
-export { getUserProfile, getFollowers, getFollowings, searchUser, followUser };
+        if (authError || !user) {
+            throw new Error('Failed to retrieve authenticated user');
+        }
+        const finalUsername = user.email?.split('@')[0];
+
+        const { error } = await supabase
+            .from('profile')
+            .insert({ user_id, username: finalUsername, avatar_url: null });
+
+        if (error) {
+            throw new Error(`Error inserting profile data: ${error.message}`);
+        }
+
+        return true;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Failed to create profile');
+    }
+};
+// OK
+const updateProfile = async (user_id: string, username?: string, avatar_url?: string): Promise<boolean> => {
+    try {
+        const supabase = createClient();
+        const {
+            data: { user },
+            error: authError
+        } = await supabase.auth.getUser();
+
+        if (authError || !user) {
+            throw new Error('Failed to retrieve authenticated user');
+        }
+
+        // Build the update object dynamically
+        const updateData: { username?: string; avatar_url?: string | null } = {};
+
+        if (username !== undefined) {
+            updateData.username = username || user.email?.split('@')[0];
+        }
+
+        if (avatar_url !== undefined) {
+            updateData.avatar_url = avatar_url || null;
+        }
+
+        const { error } = await supabase
+            .from('profile')
+            .update(updateData)
+            .eq('user_id', user_id);
+
+        if (error) {
+            throw new Error(`Error updating profile data: ${error.message}`);
+        }
+
+        return true;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Failed to update profile');
+    }
+};
+
+
+export { getUserProfile, getFollowers, getFollowings, searchUser, followUser, createProfile, updateProfile };
