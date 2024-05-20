@@ -4,75 +4,74 @@ import { PublicHabit } from "@/type";
 import { createClient } from "@/utils/supabase/server";
 
 const getPublicHabits = async (user_id: string): Promise<PublicHabit[]> => {
-    const supabase = createClient();
-    const { data, error } = await supabase
-        .from('publish')
-        .select(`
-            *,
-            habit: habit_id (*)
-        `)
-        .eq('user_id', user_id);
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("publish")
+    .select(`*, habit: habit_id (*)`)
+    .eq("user_id", user_id);
 
-    if(error){
-        console.error("Error fetching all habits", error);
-        return [];
-    }
+  if (error) {
+    console.error("Error fetching all habits", error);
+    return [];
+  }
 
-    return data.map(item=>({
-        ...item.habit,
-        joined_users: item.joined_users
-    }));
+  return data.map((item) => ({
+    ...item.habit,
+    joined_users: item.joined_users,
+  }));
 };
 
 const publishHabit = async (habit_id: string): Promise<boolean> => {
-    const supabase = createClient();
-    const { data: habitData, error: fetchError } = await supabase
-        .from('habit')
-        .select('creator_user_id')
-        .eq('habit_id', habit_id)
-        .single()
-    
-    if(fetchError){
-        console.error("Error fetching habit", fetchError);
-        return false;
-    }
-    
-    const { creator_user_id: user_id } = habitData;
-    const { error: insertError } = await supabase
-        .from('publish')
-        .insert({
-            habit_id,
-            user_id
-        });
+  const supabase = createClient();
+  const { data: habitData, error: fetchError } = await supabase
+    .from("habit")
+    .select("creator_user_id")
+    .eq("habit_id", habit_id)
+    .single();
 
-    if (insertError) {
-        console.error('Error publishing habit:', insertError);
-        return false;
-    }
+  if (fetchError) {
+    console.error("Error fetching habit", fetchError);
+    return false;
+  }
 
-    return true;
+  const { creator_user_id: user_id } = habitData;
+  const { error: insertError } = await supabase.from("publish").insert({
+    habit_id,
+    user_id,
+  });
+
+  if (insertError) {
+    console.error("Error publishing habit:", insertError);
+    return false;
+  }
+
+  return true;
 };
 
 const unpublishHabit = async (habit_id: string): Promise<boolean> => {
-    const supabase = createClient();
-    const { error } = await supabase
-       .from('publish')
-       .delete()
-       .eq('habit_id', habit_id);
-    
-    if(error){
-        console.error("Error unpublishing habit", error);
-        return false;
-    }
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("publish")
+    .delete()
+    .eq("habit_id", habit_id);
 
-    return true;
+  if (error) {
+    console.error("Error unpublishing habit", error);
+    return false;
+  }
+
+  return true;
 };
 
-const joinHabit = async (user_id: string, habit_id: string): Promise<boolean> => {
-    const supabase = createClient();
-    const { data: habitData, error: fetchError } = await supabase
-        .from('publish')
-        .select(`
+const joinHabit = async (
+  user_id: string,
+  habit_id: string
+): Promise<boolean> => {
+  const supabase = createClient();
+  const { data: habitData, error: fetchError } = await supabase
+    .from("publish")
+    .select(
+      `
             habit_id,
             habit: habit_id(
                 creator_user_id,
@@ -85,31 +84,30 @@ const joinHabit = async (user_id: string, habit_id: string): Promise<boolean> =>
                 end_date,
                 frequency
             )
-        `)
-        .eq('habit_id', habit_id)
-        .single();
-    
-    if(fetchError){
-        console.error("Error fetching habit", fetchError);
-        return false;
-    }
+        `
+    )
+    .eq("habit_id", habit_id)
+    .single();
 
-    const { habit } = habitData;
+  if (fetchError) {
+    console.error("Error fetching habit", fetchError);
+    return false;
+  }
 
-    const { error: insertError } = await supabase
-        .from('habit')
-        .insert({
-            ...habit,
-            creator_user_id: user_id,
-            created_at: new Date().toISOString(),
-        });
+  const { habit } = habitData;
 
-    if(insertError){
-        console.error("Error joining habit", insertError);
-        return false;
-    }
+  const { error: insertError } = await supabase.from("habit").insert({
+    ...habit,
+    creator_user_id: user_id,
+    created_at: new Date().toISOString(),
+  });
 
-    return true;
+  if (insertError) {
+    console.error("Error joining habit", insertError);
+    return false;
+  }
+
+  return true;
 };
 
-export { getPublicHabits, publishHabit, unpublishHabit, joinHabit };
+export { getPublicHabits, joinHabit, publishHabit, unpublishHabit };
