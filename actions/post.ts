@@ -8,7 +8,7 @@ const getMyPosts = async (user_id: string): Promise<PostTable[]> => {
   const { data, error } = await supabase
     .from("post")
     .select()
-    .eq("user_id", user_id);
+    .eq("creator_user_id", user_id);
   if (error) {
     throw new Error(`Error fetching posts: ${error.message}`);
   }
@@ -18,12 +18,9 @@ const getMyPosts = async (user_id: string): Promise<PostTable[]> => {
   return data;
 };
 
-const getOtherPosts = async (user_id: string): Promise<PostTable[]> => {
+const getAllPosts = async (): Promise<PostTable[]> => {
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from("post")
-    .select()
-    .neq("user_id", user_id);
+  const { data, error } = await supabase.from("post").select();
   if (error) {
     throw new Error(`Error fetching posts: ${error.message}`);
   }
@@ -42,7 +39,7 @@ const createPost = async (
   const { error } = await supabase.from("post").insert({
     creator_user_id: creator_user_id,
     habit_id: habit_id,
-    post_time: new Date(),
+    created_at: new Date(),
     content: content,
   });
   if (error) {
@@ -60,4 +57,4 @@ const deletePost = async (post_id: string): Promise<boolean> => {
   return true;
 };
 
-export { createPost, deletePost, getMyPosts, getOtherPosts };
+export { createPost, deletePost, getAllPosts, getMyPosts };

@@ -1,4 +1,4 @@
-import { Tables } from "@/types/supabase";
+import { Enums, Tables } from "@/types/supabase";
 
 export type HabitTable = Tables<"habit">;
 export type FollowTable = Tables<"follow">;
@@ -21,3 +21,5 @@ export type PublicHabit = HabitTable & { joined_users: ProfileTable[] };
 export type PostWithReaction = PostTable & {
   reaction: { [reaction_type]: ProfileTable[] };
 };
+
+export type ReactionType = Enums<"reaction-type">;
