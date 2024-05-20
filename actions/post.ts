@@ -2,7 +2,7 @@
 
 import { PostTable } from "@/type";
 import { createClient } from "@/utils/supabase/server";
-// OK
+
 const getMyPosts = async (user_id: string): Promise<PostTable[]> => {
   const supabase = createClient();
   const { data, error } = await supabase
@@ -17,12 +17,10 @@ const getMyPosts = async (user_id: string): Promise<PostTable[]> => {
   }
   return data;
 };
-// OK
+
 const getAllPosts = async (): Promise<PostTable[]> => {
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from("post")
-    .select();
+  const { data, error } = await supabase.from("post").select();
   if (error) {
     throw new Error(`Error fetching posts: ${error.message}`);
   }
@@ -31,11 +29,11 @@ const getAllPosts = async (): Promise<PostTable[]> => {
   }
   return data;
 };
-// OK
+
 const createPost = async (
   creator_user_id: string,
   habit_id: string,
-  content: string,
+  content: string
 ): Promise<boolean> => {
   const supabase = createClient();
   const { error } = await supabase.from("post").insert({
@@ -59,4 +57,4 @@ const deletePost = async (post_id: string): Promise<boolean> => {
   return true;
 };
 
-export { createPost, deletePost, getMyPosts, getAllPosts };
+export { createPost, deletePost, getAllPosts, getMyPosts };
