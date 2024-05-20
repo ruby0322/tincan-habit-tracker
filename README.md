@@ -43,7 +43,8 @@ Navigate to http://localhost:3000 to view the app.
 
 ## Running Tests
 
-Run the following command:
+1. Make sure the local development server is up. If not, run `yarn dev`
+2. Run the following command:
 
 ```bash
 npx playwright test
