@@ -40,3 +40,11 @@ yarn dev
 ```
 
 Navigate to http://localhost:3000 to view the app.
+
+## Running Tests
+
+Run the following command:
+
+```bash
+npx playwright test
+```
