@@ -47,5 +47,11 @@ Navigate to http://localhost:3000 to view the app.
 2. Run the following command:
 
 ```bash
-npx playwright test
+yarn test
+```
+
+If you want to test in debug mode, which allows you to test step by step and show browser in action. Run
+
+```bash
+yarn test --debug
 ```
