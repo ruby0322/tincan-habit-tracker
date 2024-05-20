@@ -10,7 +10,7 @@ import ReactionButton from "./reaction-button";
 const Post = () => {
   const [showReactions, setShowReactions] = useState(false);
   return (
-    <div className='p-2 md:p-4 h-fit flex flex-col gap-4 bg-white rounded-lg shadow-sm'>
+    <div className='p-2 md:p-4 h-fit flex flex-col gap-4 bg-white'>
       <div className='flex items-start space-x-4'>
         <div className='flex-shrink-0'>
           <Avatar>

@@ -40,3 +40,18 @@ yarn dev
 ```
 
 Navigate to http://localhost:3000 to view the app.
+
+## Running Tests
+
+1. Make sure the local development server is up. If not, run `yarn dev`
+2. Run the following command:
+
+```bash
+yarn test
+```
+
+If you want to test in debug mode, which allows you to test step by step and show browser in action. Run
+
+```bash
+yarn test --debug
+```

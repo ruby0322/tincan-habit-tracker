@@ -24,6 +24,20 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "follow_follower_id_fkey"
+            columns: ["follower_id"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "follow_following_id_fkey"
+            columns: ["following_id"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["user_id"]
+          },
+          {
             foreignKeyName: "follower_follower_id_fkey"
             columns: ["follower_id"]
             isOneToOne: false
@@ -193,15 +207,12 @@ export type Database = {
       publish: {
         Row: {
           habit_id: string
-          user_id: string
         }
         Insert: {
           habit_id: string
-          user_id?: string
         }
         Update: {
           habit_id?: string
-          user_id?: string
         }
         Relationships: [
           {
@@ -210,13 +221,6 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "habit"
             referencedColumns: ["habit_id"]
-          },
-          {
-            foreignKeyName: "publish_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -329,7 +333,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      "reaction-type": "like" | "rage" | "poop" | "laugh" | "meow"
+      "reaction-type": "like" | "rage" | "poop" | "laugh" | "meow" | "heart"
     }
     CompositeTypes: {
       [_ in never]: never
