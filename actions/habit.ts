@@ -6,7 +6,7 @@ import { createClient } from "@/utils/supabase/server";
 const getDailyHabits = async (
   creator_user_id: string
 ): Promise<DailyHabit[]> => {
-  const WEEK_DAYS: { [weekday: string]: string } = {
+  const weekDays: { [weekday: string]: string } = {
     一: "Mon",
     二: "Tue",
     三: "Wed",
@@ -16,7 +16,7 @@ const getDailyHabits = async (
     日: "Sun",
   };
   const supabase = createClient();
-  const dayOfWeek = weekDays[new Date(date).getDay()];
+  const dayOfWeek = weekDays[new Date().getDay()];
 
   const { data: habits, error: habitsError } = await supabase
     .from('habit')
@@ -41,7 +41,6 @@ const getDailyHabits = async (
     .from('record')
     .select('habit_id, num_completed_unit')
     .eq('creator_user_id', creator_user_id)
-    .eq('created_at', date);
   
   if (recordsError) {
     console.error("Error fetching records", recordsError);
