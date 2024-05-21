@@ -31,5 +31,5 @@ export type Reaction = ProfileTable & ReactionType;
 export type Post = PostTable & {
   username: string;
   avatar_url: string;
-  reactions: { [reaction_type: ReactionType]: ProfileTable[] };
+  reactions: Reaction[];
 };

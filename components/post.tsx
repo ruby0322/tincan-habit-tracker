@@ -3,13 +3,15 @@
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 import Image from "next/image";
-import { useState } from "react";
 import ReactionButton from "./reaction-button";
 // Assume necessary components and icons are imported correctly
 import { Post as PostType } from "@/type";
+import { createClient } from "@/utils/supabase/client";
 
 const Post = ({ post }: { post: PostType }) => {
-  const [showReactions, setShowReactions] = useState(false);
+  const supabase = createClient();
+  const userReaction = undefined;
+
   return (
     <div className='p-2 md:p-4 h-fit flex flex-col gap-4 bg-white'>
       <div className='flex items-start space-x-4'>
@@ -47,7 +49,7 @@ const Post = ({ post }: { post: PostType }) => {
         </div>
       </div>
       <div className='w-full pl-12'>
-        <ReactionButton />
+        <ReactionButton reaction={userReaction} postId={post.post_id} />
       </div>
     </div>
   );
