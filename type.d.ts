@@ -31,6 +31,6 @@ export type Reaction = ProfileTable & ReactionType;
 export type Post = PostTable & {
   username: string;
   avatar_url: string;
-  image_url: string;
+  picture_url: string;
   reactions: Reaction[];
 };
