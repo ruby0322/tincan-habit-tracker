@@ -1,22 +1,74 @@
 "use server";
 
-import { Post, PostTable } from "@/type";
+import { Post, PostTable, Reaction, ReactionType } from "@/type";
 import { createClient } from "@/utils/supabase/server";
 
 const getMyPosts = async (user_id: string): Promise<Post[]> => {
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from("post")
-    .select()
-    .eq("creator_user_id", user_id);
-  if (error) {
-    throw new Error(`Error fetching posts: ${error.message}`);
+  const { data: posts, error: postError } = await supabase
+    .from('post')
+    .select(`
+      *,
+      profile:creator_user_id (
+        username,
+        avatar_url
+      ),
+      habit:habit_id (
+        picture_url
+      )
+    `)
+    .eq('creator_user_id', user_id);
+
+  if (postError) {
+    throw new Error(`Error fetching posts: ${postError.message}`);
   }
-  if (!data || data.length === 0) {
+  if (!posts || posts.length === 0) {
     return [];
   }
-  return data;
+
+  const postIds = posts.map(post => post.post_id);
+  // console.log('Fetched post IDs:', postIds);
+
+  const { data: reactions, error: reactionError } = await supabase
+    .from('react_to')
+    .select(`
+      reaction_type,
+      post_id,
+      profile:user_id (
+        avatar_url,
+        user_id,
+        username
+      )
+    `)
+    .in('post_id', postIds);
+
+  if (reactionError) {
+    throw new Error(`Error fetching reactions: ${reactionError.message}`);
+  }
+
+  // console.log('Fetched reactions:', reactions);
+
+  const postsWithReactions: Post[] = posts.map(post => {
+    const postReactions = reactions.filter(reaction => reaction.post_id === post.post_id).map(reaction => ({
+      reaction_type: reaction.reaction_type,
+      post_id: reaction.post_id,
+      ...reaction.profile
+    }));
+    const newPost = {
+      ...post,
+      username: post.profile.username,
+      avatar_url: post.profile.avatar_url,
+      picture_url: post.habit.picture_url,
+      reactions: postReactions
+    };
+    delete newPost.profile;
+    delete newPost.habit;
+    return newPost;
+  });
+
+  return postsWithReactions as Post[];
 };
+
 
 const getAllPosts = async (): Promise<Post[]> => {
   const supabase = createClient();
@@ -36,7 +88,6 @@ const getAllPosts = async (): Promise<Post[]> => {
     return [];
   }
 
-  // Map the result to include username and avatar_url from the profile
   const result = data.map((post) => ({
     ...post,
     username: post.profile.username,

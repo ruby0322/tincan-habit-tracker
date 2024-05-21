@@ -1,5 +1,13 @@
 "use server";
 
+import{
+  createPost,
+  deletePost,
+  getAllPosts,
+  getFollowingUserPosts,
+  getMyPosts,
+} from "@/actions/post";
+
 export default async function Playground2() {
   const user_id = "92a75107-0564-4dae-8be0-29665aaccf2b";
   const another_user = "fafa45d2-9920-4d80-ad35-af748fed4b68";
@@ -38,22 +46,22 @@ export default async function Playground2() {
   // }
 
   //test posts
-  // try {
-  //     const newPosts = await createPost(user_id, habit_id, content);
-  //     console.log("new posts", newPosts);
+  try {
+      // const newPosts = await createPost(new_user_id, habit_id, content);
+      // console.log("new posts", newPosts);
 
   //     const deletePosts = await deletePost(post_id);
   //     console.log("delete post", deletePosts);
 
-  //     const myPosts = await getMyPosts(new_user_id);
-  //     console.log("me post", myPosts);
+      const myPosts = await getMyPosts(new_user_id);
+      console.log("me post", myPosts);
 
   //     const allPosts = await getAllPosts();
   //     console.log("all posts", allPosts);
 
-  // } catch (error) {
-  //     console.error("Error during backend function calls", error);
-  // }
+  } catch (error) {
+      console.error("Error during backend function calls", error);
+  }
 
   //test react
   // try {
