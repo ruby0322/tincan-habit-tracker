@@ -2,7 +2,7 @@
 
 import { getUserProfile, getFollowers, getFollowings, searchUser, followUser, createProfile, updateProfile } from "@/actions/user";
 import { reactToPost } from "@/actions/react";
-import { createPost, deletePost, getMyPosts, getAllPosts } from "@/actions/posts";
+import { createPost, deletePost, getMyPosts, getAllPosts } from "@/actions/post";
 
 export default async function Playground2() {
     
