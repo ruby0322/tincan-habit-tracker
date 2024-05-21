@@ -1,5 +1,4 @@
 "use client";
-
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
@@ -9,45 +8,79 @@ import ReactionButton, { REACTIONS } from "./reaction-button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Post as PostType, Reaction } from "@/type";
 
+const ReactionRow = ({ reaction }: { reaction: Reaction }) => {
+  return (
+    <div className='w-full flex gap-4 px-4 items-center justify-between'>
+      <div className='flex gap-4 items-center'>
+        <Avatar className='w-12 h-12'>
+          <AvatarImage
+            alt={reaction.username}
+            src={reaction.avatar_url as string}
+          />
+          <AvatarFallback>{reaction.username}</AvatarFallback>
+        </Avatar>
+        <div className='flex items-center justify-between'>
+          <div className='flex gap-2'>
+            <h3 className='text-lg text-gray-900'>{reaction.username}</h3>
+          </div>
+        </div>
+      </div>
+      {REACTIONS[reaction.reactionType]}
+    </div>
+  );
+};
+
 const ReactionDrawer = ({ reactions }: { reactions: Reaction[] }) => {
   return (
-    <Tabs defaultValue='like' className='w-full p-4 border-0'>
-      <div className='w-full h-full'>
-        <TabsList className='mb-4 grid w-full h-fit gap-1 grid-cols-3 grid-rows-2'>
+    <Tabs
+      defaultValue='all'
+      className='w-full items-center justify-center flex flex-col  p-4 border-0'
+    >
+      <div className='w-full h-full max-w-[45rem]'>
+        <div className='p-2 text-center text-base items-center text-gray-700 flex w-full'>
+          {reactions.length} 個人按了這篇貼文表情
+        </div>
+        <TabsList className='mb-4 grid w-full h-fit gap-1 grid-cols-3 md:grid-cols-6'>
           {Object.keys(REACTIONS).map((reactionType) => {
             return (
-              <TabsTrigger value={reactionType}>
+              <TabsTrigger
+                value={reactionType}
+                className='flex gap-2 font-bold'
+              >
                 {REACTIONS[reactionType]}
+                <div>
+                  {
+                    reactions.filter(
+                      (reaction) => reaction.reactionType === reactionType
+                    ).length
+                  }
+                </div>
               </TabsTrigger>
             );
           })}
         </TabsList>
+        <TabsContent className='flex flex-col gap-4' value='all'>
+          {reactions.map((reaction, index) => {
+            return (
+              <ReactionRow key={`reaction-row-${index}`} reaction={reaction} />
+            );
+          })}
+        </TabsContent>
         {Object.keys(REACTIONS).map((reactionType) => {
           return (
-            <TabsContent value={reactionType}>
+            <TabsContent
+              className='flex flex-col gap-4'
+              key={`${reactionType}-reaction-tab`}
+              value={reactionType}
+            >
               {reactions
                 .filter((reaction) => reaction.reactionType === reactionType)
                 .map((reaction, index) => {
                   return (
-                    <div
-                      key={`reaction-user-row-${index}}`}
-                      className='flex gap-4 px-4'
-                    >
-                      <Avatar className='w-12 h-12'>
-                        <AvatarImage
-                          alt={reaction.username}
-                          src={reaction.avatar_url as string}
-                        />
-                        <AvatarFallback>{reaction.username}</AvatarFallback>
-                      </Avatar>
-                      <div className='flex items-center justify-between'>
-                        <div className='flex gap-2'>
-                          <h3 className='text-lg text-gray-900'>
-                            {reaction.username}
-                          </h3>
-                        </div>
-                      </div>
-                    </div>
+                    <ReactionRow
+                      key={`reaction-row-${index}`}
+                      reaction={reaction}
+                    />
                   );
                 })}
             </TabsContent>
@@ -103,12 +136,12 @@ const Post = ({ post, userId }: { post: PostType; userId: string }) => {
         <ReactionButton userReaction={userReaction} postId={post.post_id} />
         <Drawer>
           <DrawerTrigger asChild>
-            <div className='cursor-pointer font-bold text-base text-gray-700 flex'>
+            <div className='cursor-pointer font-bold text-base text-gray-700 flex gap-1'>
               <div className='underline'>{post.reactions.length} 個人</div>
-              按了這篇貼文表情
+              <div>按了這篇貼文表情</div>
             </div>
           </DrawerTrigger>
-          <DrawerContent className='min-h-[50vh] flex flex-col gap-4 overflow-y-scroll'>
+          <DrawerContent className='min-h-[50vh] flex flex-col overflow-y-scroll'>
             <ReactionDrawer reactions={post.reactions} />
           </DrawerContent>
         </Drawer>
