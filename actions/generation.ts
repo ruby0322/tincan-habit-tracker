@@ -19,8 +19,8 @@ const generateHabitReminder = async (
   username: string,
   title: string,
   dailyGoal: string,
-  completionStreak: number,
-  failureStreak: number
+  // completionStreak: number,
+  // failureStreak: number
 ) => {
   const prompt = `
   Information: 你的主人要養成「${title}」習慣，但他今天的短期目標「${dailyGoal}」還沒達成！

@@ -1,4 +1,4 @@
-"user server";
+"use server";
 
 import { ProfileTable } from "@/type";
 import { createClient } from "@/utils/supabase/server";
