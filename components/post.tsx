@@ -17,8 +17,8 @@ const Post = ({ post }: { post: PostType }) => {
       <div className='flex items-start space-x-4'>
         <div className='flex-shrink-0'>
           <Avatar>
-            <AvatarImage alt='@jaredpalmer' src={post.avatar_url} />
-            <AvatarFallback>JP</AvatarFallback>
+            <AvatarImage alt={post.username} src={post.avatar_url} />
+            <AvatarFallback>{post.username}</AvatarFallback>
           </Avatar>
         </div>
         <div className='flex-1 flex flex-col gap-2'>
@@ -28,11 +28,9 @@ const Post = ({ post }: { post: PostType }) => {
                 {post.username}
               </h3>
               <p className='text-sm text-gray-500'>
-                <time dateTime='2023-04-14T09:12:34'>
-                  {new Date(post.created_at as string).toLocaleDateString(
-                    "zh-TW"
-                  )}
-                </time>
+                {new Date(post.created_at as string).toLocaleDateString(
+                  "zh-TW"
+                )}
               </p>
             </div>
           </div>
