@@ -24,5 +24,6 @@ export type PublicHabit = HabitTable & {
 export type PostWithReaction = PostTable & {
   reaction: { [reaction_type]: ProfileTable[] };
 };
+export type Post = PostTable & { username: string; avatar_url: string };
 
 export type ReactionType = Enums<"reaction-type">;

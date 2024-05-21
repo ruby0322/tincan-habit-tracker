@@ -1,6 +1,6 @@
 "use server";
 
-import { PostTable } from "@/type";
+import { Post, PostTable } from "@/type";
 import { createClient } from "@/utils/supabase/server";
 
 const getMyPosts = async (user_id: string): Promise<PostTable[]> => {
@@ -18,16 +18,81 @@ const getMyPosts = async (user_id: string): Promise<PostTable[]> => {
   return data;
 };
 
-const getAllPosts = async (): Promise<PostTable[]> => {
+const getAllPosts = async (): Promise<Post[]> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from("post").select();
+
+  const { data, error } = await supabase.from("post").select(`
+      *,
+      profile:creator_user_id (
+        username,
+        avatar_url
+      )
+    `);
+
   if (error) {
     throw new Error(`Error fetching posts: ${error.message}`);
   }
   if (!data || data.length === 0) {
     return [];
   }
-  return data;
+
+  // Map the result to include username and avatar_url from the profile
+  const result = data.map((post) => ({
+    ...post,
+    username: post.profile.username,
+    avatar_url: post.profile.avatar_url,
+  }));
+
+  return result;
+};
+
+const getFollowingUserPosts = async (userId: string): Promise<Post[]> => {
+  const supabase = createClient();
+
+  // First, get the list of users that the current user is following
+  const { data: followData, error: followError } = await supabase
+    .from("follow")
+    .select("following_id")
+    .eq("follower_id", userId);
+
+  if (followError) {
+    throw new Error(`Error fetching follow data: ${followError.message}`);
+  }
+  if (!followData || followData.length === 0) {
+    return [];
+  }
+
+  const followingIds = followData.map((follow) => follow.following_id);
+
+  // Next, get the posts created by the users that the current user is following and join with profile to get username and avatar_url
+  const { data: postData, error: postError } = await supabase
+    .from("post")
+    .select(
+      `
+      *,
+      profile:creator_user_id (
+        username,
+        avatar_url
+      )
+    `
+    )
+    .in("creator_user_id", followingIds);
+
+  if (postError) {
+    throw new Error(`Error fetching posts: ${postError.message}`);
+  }
+  if (!postData || postData.length === 0) {
+    return [];
+  }
+
+  // Map the result to include username and avatar_url from the profile
+  const result = postData.map((post) => ({
+    ...post,
+    username: post.profile.username,
+    avatar_url: post.profile.avatar_url,
+  }));
+
+  return result;
 };
 
 const createPost = async (
@@ -57,4 +122,10 @@ const deletePost = async (post_id: string): Promise<boolean> => {
   return true;
 };
 
-export { createPost, deletePost, getAllPosts, getMyPosts };
+export {
+  createPost,
+  deletePost,
+  getAllPosts,
+  getFollowingUserPosts,
+  getMyPosts,
+};
