@@ -5,7 +5,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { ReactionType } from "@/type";
+import { Reaction, ReactionType } from "@/type";
 import { createClient } from "@/utils/supabase/client";
 import {
   AngryIcon,
@@ -63,7 +63,7 @@ const PoopIcon = ({
   );
 };
 
-const REACTIONS: { [reactionType: string]: ReactNode } = {
+export const REACTIONS: { [reactionType: string]: ReactNode } = {
   like: <ThumbsUpIcon className='cursor-pointer h-6 w-6 text-gray-500' />,
   rage: <AngryIcon className='cursor-pointer h-6 w-6 text-gray-500' />,
   poop: <PoopIcon className='cursor-pointer h-6 w-6 text-gray-500' />,
@@ -74,10 +74,10 @@ const REACTIONS: { [reactionType: string]: ReactNode } = {
 
 const ReactionButton = ({
   postId,
-  reaction,
+  userReaction,
 }: {
   postId: string;
-  reaction?: ReactionType;
+  userReaction?: Reaction;
 }) => {
   const onClick = (reactionType: ReactionType) => {
     return async () => {
@@ -91,9 +91,7 @@ const ReactionButton = ({
         router.push("/login");
         return false;
       }
-
-      await reactToPost(user.id as string, postId, reactionType);
-      return true;
+      return await reactToPost(user.id as string, postId, reactionType);
     };
   };
   return (
@@ -107,18 +105,18 @@ const ReactionButton = ({
         side='right'
       >
         <div className='flex gap-2 items-center'>
-          {Object.keys(REACTIONS).map((r) => {
+          {Object.keys(REACTIONS).map((reactionType) => {
             return (
               <div
-                key={`${postId}-reaction-${r}`}
-                onClick={onClick(r as ReactionType)}
+                key={`${postId}-reaction-${reactionType}`}
+                onClick={onClick(reactionType as ReactionType)}
                 className={cn(
                   "rounded-full p-1",
-                  r === reaction &&
+                  userReaction?.reactionType === reactionType &&
                     "bg-gray-100 shadow-[inset_-12px_-8px_40px_#46464620]"
                 )}
               >
-                {REACTIONS[r]}
+                {REACTIONS[reactionType]}
               </div>
             );
           })}
