@@ -2,6 +2,7 @@
 
 import { ReactionType } from "@/type";
 import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
 
 const reactToPost = async (
   user_id: string,
@@ -52,6 +53,7 @@ const reactToPost = async (
       }
     }
   }
+  revalidatePath("/social");
   return true;
 };
 

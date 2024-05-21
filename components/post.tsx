@@ -95,7 +95,6 @@ const Post = ({ post, userId }: { post: PostType; userId: string }) => {
   const userReaction = post.reactions
     .filter((reaction) => reaction.user_id === userId)
     .at(0);
-  console.log(userReaction);
 
   return (
     <div className='p-2 md:p-4 h-fit flex flex-col gap-4 bg-white'>

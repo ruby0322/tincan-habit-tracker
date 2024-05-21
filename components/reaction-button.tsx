@@ -79,6 +79,7 @@ const ReactionButton = ({
   postId: string;
   userReaction?: Reaction;
 }) => {
+  console.log(userReaction);
   const onClick = (reactionType: ReactionType) => {
     return async () => {
       const supabase = createClient();
@@ -91,6 +92,7 @@ const ReactionButton = ({
         router.push("/login");
         return false;
       }
+      console.log(user.id as string, postId, reactionType);
       return await reactToPost(user.id as string, postId, reactionType);
     };
   };
@@ -112,7 +114,7 @@ const ReactionButton = ({
                 onClick={onClick(reactionType as ReactionType)}
                 className={cn(
                   "rounded-full p-1",
-                  userReaction?.reactionType === reactionType &&
+                  (userReaction?.reactionType as string) === reactionType &&
                     "bg-gray-100 shadow-[inset_-12px_-8px_40px_#46464620]"
                 )}
               >

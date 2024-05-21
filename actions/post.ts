@@ -1,13 +1,14 @@
 "use server";
 
-import { Post, PostTable, Reaction, ReactionType } from "@/type";
+import { Post } from "@/type";
 import { createClient } from "@/utils/supabase/server";
 
 const getMyPosts = async (user_id: string): Promise<Post[]> => {
   const supabase = createClient();
   const { data: posts, error: postError } = await supabase
-    .from('post')
-    .select(`
+    .from("post")
+    .select(
+      `
       *,
       profile:creator_user_id (
         username,
@@ -16,8 +17,9 @@ const getMyPosts = async (user_id: string): Promise<Post[]> => {
       habit:habit_id (
         picture_url
       )
-    `)
-    .eq('creator_user_id', user_id);
+    `
+    )
+    .eq("creator_user_id", user_id);
 
   if (postError) {
     throw new Error(`Error fetching posts: ${postError.message}`);
@@ -26,12 +28,13 @@ const getMyPosts = async (user_id: string): Promise<Post[]> => {
     return [];
   }
 
-  const postIds = posts.map(post => post.post_id);
+  const postIds = posts.map((post) => post.post_id);
   // console.log('Fetched post IDs:', postIds);
 
   const { data: reactions, error: reactionError } = await supabase
-    .from('react_to')
-    .select(`
+    .from("react_to")
+    .select(
+      `
       reaction_type,
       post_id,
       profile:user_id (
@@ -39,8 +42,9 @@ const getMyPosts = async (user_id: string): Promise<Post[]> => {
         user_id,
         username
       )
-    `)
-    .in('post_id', postIds);
+    `
+    )
+    .in("post_id", postIds);
 
   if (reactionError) {
     throw new Error(`Error fetching reactions: ${reactionError.message}`);
@@ -48,18 +52,20 @@ const getMyPosts = async (user_id: string): Promise<Post[]> => {
 
   // console.log('Fetched reactions:', reactions);
 
-  const postsWithReactions: Post[] = posts.map(post => {
-    const postReactions = reactions.filter(reaction => reaction.post_id === post.post_id).map(reaction => ({
-      reaction_type: reaction.reaction_type,
-      post_id: reaction.post_id,
-      ...reaction.profile
-    }));
+  const postsWithReactions: Post[] = posts.map((post) => {
+    const postReactions = reactions
+      .filter((reaction) => reaction.post_id === post.post_id)
+      .map((reaction) => ({
+        reaction_type: reaction.reaction_type,
+        post_id: reaction.post_id,
+        ...reaction.profile,
+      }));
     const newPost = {
       ...post,
       username: post.profile.username,
       avatar_url: post.profile.avatar_url,
       picture_url: post.habit.picture_url,
-      reactions: postReactions
+      reactions: postReactions,
     };
     delete newPost.profile;
     delete newPost.habit;
@@ -68,7 +74,6 @@ const getMyPosts = async (user_id: string): Promise<Post[]> => {
 
   return postsWithReactions as Post[];
 };
-
 
 const getAllPosts = async (): Promise<Post[]> => {
   const supabase = createClient();

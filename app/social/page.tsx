@@ -1,5 +1,6 @@
 "use server";
 
+import { getAllPosts } from "@/actions/post";
 import Post from "@/components/post";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Post as PostType } from "@/type";
@@ -85,7 +86,8 @@ const SocialPage = async () => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const posts = FAKE_POSTS;
+  const posts = await getAllPosts();
+
   return (
     <Tabs defaultValue='friends' className='w-full p-4 border-0'>
       <div className='w-full h-full'>
