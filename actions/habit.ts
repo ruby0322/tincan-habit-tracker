@@ -3,11 +3,18 @@
 import { DailyHabit, HabitTable, LightHabit, RecordTable } from "@/type";
 import { createClient } from "@/utils/supabase/server";
 
-const getDailyHabit = async (
-  creator_user_id: string,
-  date: string
+const getDailyHabits = async (
+  creator_user_id: string
 ): Promise<DailyHabit[]> => {
-  const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  const WEEK_DAYS: { [weekday: string]: string } = {
+    一: "Mon",
+    二: "Tue",
+    三: "Wed",
+    四: "Thu",
+    五: "Fri",
+    六: "Sat",
+    日: "Sun",
+  };
   const supabase = createClient();
   const dayOfWeek = weekDays[new Date(date).getDay()];
 
@@ -60,11 +67,11 @@ const getDailyHabit = async (
 const getLightHabits = async (creator_user_id: string): Promise<LightHabit[]> => {
   const supabase = createClient();
   const { data, error } = await supabase
-    .from('habit')
-    .select('habit_id, title, picture_url')
-    .eq('creator_user_id', creator_user_id);
-  
-  if(error){
+    .from("habit")
+    .select("habit_id, title, picture_url")
+    .eq("creator_user_id", creator_user_id);
+
+  if (error) {
     console.error("Error fetching light habits", error);
     return [];
   }
@@ -87,9 +94,7 @@ const createHabit = async (
   frequency: {}
 ): Promise<boolean> => {
   const supabase = createClient();
-  const { data, error } = await supabase
-   .from('habit')
-   .insert([
+  const { data, error } = await supabase.from("habit").insert([
     {
       creator_user_id,
       title,
@@ -99,11 +104,11 @@ const createHabit = async (
       daily_goal_unit,
       start_date,
       end_date,
-      frequency
-    }
+      frequency,
+    },
   ]);
 
-  if(error){
+  if (error) {
     console.error("Error creating habit", error);
     return false;
   }
@@ -114,11 +119,11 @@ const createHabit = async (
 const deleteHabit = async (habit_id: string): Promise<boolean> => {
   const supabase = createClient();
   const { data, error } = await supabase
-    .from('habit')
+    .from("habit")
     .delete()
-    .eq('habit_id', habit_id);
+    .eq("habit_id", habit_id);
 
-  if(error){
+  if (error) {
     console.error("Error deleting habit", error);
     return false;
   }
@@ -129,11 +134,11 @@ const deleteHabit = async (habit_id: string): Promise<boolean> => {
 const getAllHabits = async (creator_user_id: string): Promise<HabitTable[]> => {
   const supabase = createClient();
   const { data, error } = await supabase
-    .from('habit')
-    .select('*')
-    .eq('creator_user_id', creator_user_id);
+    .from("habit")
+    .select("*")
+    .eq("creator_user_id", creator_user_id);
 
-  if(error){
+  if (error) {
     console.error("Error fetching all habits", error);
     return [];
   }
@@ -141,4 +146,10 @@ const getAllHabits = async (creator_user_id: string): Promise<HabitTable[]> => {
   return data;
 };
 
-export { getDailyHabit, getLightHabits, createHabit, deleteHabit, getAllHabits };
+export {
+  createHabit,
+  deleteHabit,
+  getAllHabits,
+  getDailyHabits,
+  getLightHabits,
+};

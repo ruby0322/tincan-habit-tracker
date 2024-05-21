@@ -5,22 +5,21 @@ import { getPublicHabits, publishHabit, unpublishHabit, joinHabit } from "@/acti
 import { getReport } from "@/actions/report";
 
 export default async function Playground() {
-    
-    let creator_user_id = "92a75107-0564-4dae-8be0-29665aaccf2b";
-    let date = "2024-05-16";
-    let habitId = "1bc5c70b-5c5e-4a79-8954-184a12938b31"
+  let creator_user_id = "92a75107-0564-4dae-8be0-29665aaccf2b";
+  let date = "2024-05-16";
+  let habitId = "1bc5c70b-5c5e-4a79-8954-184a12938b31";
 
-    const fetchDailyHabits = async () => {
-        const dailyHabits = await getDailyHabit(creator_user_id, date);
-        console.log("-----這是分隔線-----", dailyHabits);
-    };
-    // await fetchDailyHabits();
+  const fetchDailyHabits = async () => {
+    const dailyHabits = await getDailyHabits(creator_user_id);
+    console.log("-----這是分隔線-----", dailyHabits);
+  };
+  // await fetchDailyHabits();
 
-    const fetchLightHabits = async () => {
-        const lightHabits = await getLightHabits(creator_user_id);
-        console.log("light habits: ", lightHabits);
-    };
-    // await fetchLightHabits();
+  const fetchLightHabits = async () => {
+    const lightHabits = await getLightHabits(creator_user_id);
+    console.log("light habits: ", lightHabits);
+  };
+  // await fetchLightHabits();
 
     const handleCreateHabit = async () => {
         const success = await createHabit(
@@ -87,10 +86,10 @@ export default async function Playground() {
     };
     // await fetchReport();
 
-    return (
-        <div>
-            <h1>去 CMoney 實習可以帶顧寬証嗎</h1>
-            <div>Testing</div>
-        </div>
-    );
+  return (
+    <div>
+      <h1>去 CMoney 實習可以帶顧寬証嗎</h1>
+      <div>Testing</div>
+    </div>
+  );
 }
