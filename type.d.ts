@@ -17,8 +17,15 @@ export type LightHabit = {
 export type HabitReport = HabitTable & {
   records: { [date: string]: number };
 };
-export type PublicHabit = HabitTable & { joined_users: ProfileTable[] };
-export type PostWithReaction = PostTable & {};
+export type PublicHabit = HabitTable & {
+  joined_users: ProfileTable[];
+  has_joined: boolean;
+};
+export type PostWithReaction = PostTable & {
+  reaction: { [reaction_type]: ProfileTable[] };
+};
+
+export type ReactionType = Enums<"reaction-type">;
 export type Reaction = ProfileTable & ReactionType;
 
 export type ReactionType = Enums<"reaction-type">;

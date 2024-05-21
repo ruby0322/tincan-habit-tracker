@@ -3,7 +3,7 @@
 import { Post, PostTable } from "@/type";
 import { createClient } from "@/utils/supabase/server";
 
-const getMyPosts = async (user_id: string): Promise<PostTable[]> => {
+const getMyPosts = async (user_id: string): Promise<Post[]> => {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("post")
@@ -46,14 +46,14 @@ const getAllPosts = async (): Promise<Post[]> => {
   return result;
 };
 
-const getFollowingUserPosts = async (userId: string): Promise<Post[]> => {
+const getFollowingUserPosts = async (user_id: string): Promise<Post[]> => {
   const supabase = createClient();
 
   // First, get the list of users that the current user is following
   const { data: followData, error: followError } = await supabase
     .from("follow")
     .select("following_id")
-    .eq("follower_id", userId);
+    .eq("follower_id", user_id);
 
   if (followError) {
     throw new Error(`Error fetching follow data: ${followError.message}`);
