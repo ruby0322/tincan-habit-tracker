@@ -3,10 +3,12 @@
 import { getDailyHabits, getLightHabits, createHabit, deleteHabit, getAllHabits } from "@/actions/habit";
 import { getPublicHabits, publishHabit, unpublishHabit, joinHabit } from "@/actions/public-habits";
 import { getReport } from "@/actions/report";
+import { incrementCompletedUnit, decrementCompletedUnit } from "@/actions/record";
+
 
 export default async function Playground() {
   let creator_user_id = "92a75107-0564-4dae-8be0-29665aaccf2b";
-  let date = "2024-05-16";
+  let date = new Date("2024-05-16");
   let habitId = "1bc5c70b-5c5e-4a79-8954-184a12938b31";
 
   const fetchDailyHabits = async () => {
@@ -85,6 +87,18 @@ export default async function Playground() {
         console.log("Successfully retrieved report!", report)
     };
     // await fetchReport();
+
+    const handleIncrementCompletedUnit = async () => {
+        const success = await incrementCompletedUnit(habitId);
+        console.log("Successfully incremented!")
+    };
+    // await handleIncrementCompletedUnit();
+
+    const handleDecrementCompletedUnit = async () => {
+        const success = await decrementCompletedUnit(habitId);
+        console.log("Successfully decremented!")
+    };
+    // await handleDecrementCompletedUnit();
 
   return (
     <div>
