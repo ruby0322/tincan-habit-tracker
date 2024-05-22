@@ -80,6 +80,7 @@ const ReactionButton = ({
   userReaction?: Reaction;
 }) => {
   console.log(userReaction);
+
   const onClick = (reactionType: ReactionType) => {
     return async () => {
       const supabase = createClient();
@@ -92,6 +93,7 @@ const ReactionButton = ({
         router.push("/login");
         return false;
       }
+
       console.log(user.id as string, postId, reactionType);
       return await reactToPost(user.id as string, postId, reactionType);
     };
@@ -108,13 +110,14 @@ const ReactionButton = ({
       >
         <div className='flex gap-2 items-center'>
           {Object.keys(REACTIONS).map((reactionType) => {
+            console.log(userReaction?.reaction_type as string);
             return (
               <div
                 key={`${postId}-reaction-${reactionType}`}
                 onClick={onClick(reactionType as ReactionType)}
                 className={cn(
                   "rounded-full p-1",
-                  (userReaction?.reactionType as string) === reactionType &&
+                  (userReaction?.reaction_type as string) === reactionType &&
                     "bg-gray-100 shadow-[inset_-12px_-8px_40px_#46464620]"
                 )}
               >
