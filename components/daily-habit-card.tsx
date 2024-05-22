@@ -10,11 +10,11 @@ const DailyHabitCard = ({ dailyHabit }: { dailyHabit: DailyHabit }) => {
         {dailyHabit.title}
       </h2>
       <Image
-        alt='Avatar'
+        alt={`Picture of ${dailyHabit.title}`}
         className='w-24 h-24 rounded-lg'
         width='1024'
         height='1024'
-        src='https://dmbkhireuarjpvecjmds.supabase.co/storage/v1/object/public/image/dalle-image-1984271e-b00b-4b5a-8211-7617ed80ac56'
+        src={dailyHabit.picture_url}
       />
       <Progress
         className='h-4 rounded'

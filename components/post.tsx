@@ -6,7 +6,8 @@ import Image from "next/image";
 import ReactionButton, { REACTIONS } from "./reaction-button";
 // Assume necessary components and icons are imported correctly
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Post as PostType, Reaction } from "@/type";
+import { Post as PostType, Reaction, ReactionType } from "@/type";
+import { useState } from "react";
 
 const ReactionRow = ({ reaction }: { reaction: Reaction }) => {
   return (
@@ -25,7 +26,7 @@ const ReactionRow = ({ reaction }: { reaction: Reaction }) => {
           </div>
         </div>
       </div>
-      {REACTIONS[reaction.reactionType]}
+      {REACTIONS[reaction.reaction_type]}
     </div>
   );
 };
@@ -44,6 +45,7 @@ const ReactionDrawer = ({ reactions }: { reactions: Reaction[] }) => {
           {Object.keys(REACTIONS).map((reactionType) => {
             return (
               <TabsTrigger
+                key={`reaction-tab-${reactionType}`}
                 value={reactionType}
                 className='flex gap-2 font-bold'
               >
@@ -51,7 +53,8 @@ const ReactionDrawer = ({ reactions }: { reactions: Reaction[] }) => {
                 <div>
                   {
                     reactions.filter(
-                      (reaction) => reaction.reactionType === reactionType
+                      (reaction) =>
+                        (reaction.reaction_type as string) === reactionType
                     ).length
                   }
                 </div>
@@ -74,7 +77,7 @@ const ReactionDrawer = ({ reactions }: { reactions: Reaction[] }) => {
               value={reactionType}
             >
               {reactions
-                .filter((reaction) => reaction.reactionType === reactionType)
+                .filter((reaction) => reaction.reaction_type === reactionType)
                 .map((reaction, index) => {
                   return (
                     <ReactionRow
@@ -92,10 +95,22 @@ const ReactionDrawer = ({ reactions }: { reactions: Reaction[] }) => {
 };
 
 const Post = ({ post, userId }: { post: PostType; userId: string }) => {
-  const userReaction = post.reactions
-    .filter((reaction) => reaction.user_id === userId)
-    .at(0);
-  console.log(userReaction);
+  const [userReaction, setUserReaction] = useState<Reaction | undefined>(
+    post.reactions.filter((reaction) => reaction.user_id === userId).at(0)
+  );
+
+  const optimisticReactUpdate = async (reactionType: ReactionType) => {
+    if (userReaction && userReaction.reaction_type === reactionType) {
+      setUserReaction(undefined);
+    } else {
+      setUserReaction({
+        username: "",
+        user_id: userId,
+        avatar_url: "",
+        reaction_type: reactionType,
+      });
+    }
+  };
 
   return (
     <div className='p-2 md:p-4 h-fit flex flex-col gap-4 bg-white'>
@@ -133,7 +148,11 @@ const Post = ({ post, userId }: { post: PostType; userId: string }) => {
         </div>
       </div>
       <div className='w-full pl-12 flex gap-4 items-center'>
-        <ReactionButton userReaction={userReaction} postId={post.post_id} />
+        <ReactionButton
+          onReact={optimisticReactUpdate}
+          userReaction={userReaction}
+          postId={post.post_id}
+        />
         <Drawer>
           <DrawerTrigger asChild>
             <div className='cursor-pointer font-bold text-base text-gray-700 flex gap-1'>

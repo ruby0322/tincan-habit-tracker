@@ -1,16 +1,15 @@
 "use client";
+import { generateHabitReminder } from "@/actions/generation";
+import { createHabit } from "@/actions/habit";
+import { getUserProfile } from "@/actions/user";
 import { Skeleton } from "@/components/ui/skeleton";
+import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import CreateForm from "./create-form";
-import { createHabit } from "@/actions/habit";
-import { createClient } from "@/utils/supabase/client";
-import { generateHabitReminder } from "@/actions/generation";
-import { getUserProfile } from "@/actions/user";
-import { useRouter } from "next/navigation";
 
 const CreatePage = () => {
-
   const today = new Date();
   const router = useRouter();
 
@@ -23,32 +22,29 @@ const CreatePage = () => {
   const [dailyGoalUnit, setDailyGoalUnit] = useState<string>("");
   const [startDate, setStartDate] = useState<Date>(today);
   const [endDate, setEndDate] = useState<Date>(today);
-  const [frequency, setFrequency] = useState<{ [weekday: string]: boolean }>({'Mon': false, 'Tue': false, 'Wed': false, 'Thu': false, 'Fri': false, 'Sat': false, 'Sun': false});
-  const [completionStreak, setCompletionStreak] = useState<number>(0);
-  const [failureStreak, setFailureStreak] = useState<number>(0);
+  const [frequency, setFrequency] = useState<{ [weekday: string]: boolean }>({
+    Mon: false,
+    Tue: false,
+    Wed: false,
+    Thu: false,
+    Fri: false,
+    Sat: false,
+    Sun: false,
+  });
 
-  const fetchData = async (
-    title: string,
-    goal: string,
-  ) => {
+  const fetchData = async (title: string, goal: string) => {
     setLoading(true);
 
     // get user_id
     const supabase = createClient();
-    const {
-      data: user,
-    } = await supabase.auth.getUser();
-    user.user?.id === undefined ? setUserId("") :setUserId(user.user?.id);
-    console.log(user.user?.id)
+    const { data: user } = await supabase.auth.getUser();
+    user.user?.id === undefined ? setUserId("") : setUserId(user.user?.id);
+    console.log(user.user?.id);
 
-    if(user.user?.id != undefined){
+    if (user.user?.id != undefined) {
       // message
       const profile = await getUserProfile(user.user?.id);
-      const res = await generateHabitReminder(
-        profile.username,
-        title,
-        goal,
-      );
+      const res = await generateHabitReminder(profile.username, title, goal);
       setMessage(res);
 
       let imageUrlTest = "";
@@ -77,23 +73,30 @@ const CreatePage = () => {
         setImageUrl(""); // Handle error: reset response or set an error message
       } finally {
         setLoading(false);
-        console.log('freq:', frequency);
-        await createHabit(user.user?.id, title, imageUrlTest, res, numDailyGoalUnit, dailyGoalUnit, startDate, endDate, frequency);
+        console.log("freq:", frequency);
+        await createHabit(
+          user.user?.id,
+          title,
+          imageUrlTest,
+          res,
+          numDailyGoalUnit,
+          dailyGoalUnit,
+          startDate,
+          endDate,
+          frequency
+        );
         router.push("/manage");
       }
     }
-    
-    
   };
 
   return (
-    <div className='flex items-center justify-center flex-col gap-8'>
+    <div className='flex items-center justify-center flex-col gap-8 pt-4'>
       {loading ? (
         <>
-        <div>錫罐圖片生成中......</div>
-        <Skeleton className='h-[256px] w-[256px] rounded' />
+          <div>錫罐圖片生成中......</div>
+          <Skeleton className='h-[256px] w-[256px] rounded' />
         </>
-        
       ) : (
         imageUrl && (
           <Image
@@ -120,7 +123,18 @@ const CreatePage = () => {
         frequencySetter={setFrequency}
         onSubmit={() => {
           fetchData(title, numDailyGoalUnit.toString() + dailyGoalUnit);
-          console.log('after create habit', userId, title, imageUrl, message, numDailyGoalUnit, dailyGoalUnit, startDate, endDate, frequency);
+          console.log(
+            "after create habit",
+            userId,
+            title,
+            imageUrl,
+            message,
+            numDailyGoalUnit,
+            dailyGoalUnit,
+            startDate,
+            endDate,
+            frequency
+          );
         }}
       />
     </div>

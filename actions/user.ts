@@ -168,6 +168,21 @@ const updateProfile = async (
   }
 };
 
+const checkFollowing = async (userA_id: string, userB_id: string): Promise<boolean> => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("follow")
+    .select(`*`)
+    .match({ follower_id: userA_id, following_id: userB_id });
+  if (error) {
+    throw new Error(`Error fetching follow: ${error.message}`);
+  }
+  if (data.length === 0) {
+    return false;
+  }
+  return true;
+};
+
 export {
   createProfile,
   followUser,
@@ -176,4 +191,5 @@ export {
   getUserProfile,
   searchUser,
   updateProfile,
+  checkFollowing
 };
