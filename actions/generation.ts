@@ -11,7 +11,6 @@ const askGPT = async (role: string, prompt: string): Promise<string> => {
     ],
     model: "gpt-4o",
   });
-  console.log(completion.choices[0]);
   return completion.choices[0].message.content as string;
 };
 
@@ -19,8 +18,8 @@ const generateHabitReminder = async (
   username: string,
   title: string,
   dailyGoal: string,
-  completionStreak: number,
-  failureStreak: number
+  // completionStreak: number,
+  // failureStreak: number
 ) => {
   const prompt = `
   Information: 你的主人要養成「${title}」習慣，但他今天的短期目標「${dailyGoal}」還沒達成！
@@ -51,22 +50,16 @@ const generateTinCanImage = async (
         : "sad"
       : ""
   }`;
-  console.log(prompt);
   const response = await openai.images.generate({
     model: "dall-e-3",
     prompt,
     n: 1,
     size: "1024x1024",
   });
-  console.log(response.data);
   const res = await fetch(response.data[0].url as string);
   const imageBlob = await res.blob();
   const storageImageUrl = await storeImageToStorage(imageBlob);
   return storageImageUrl;
 };
 
-const test = async () => {
-  console.log("test");
-};
-
-export { askGPT, generateHabitReminder, generateTinCanImage, test };
+export { askGPT, generateHabitReminder, generateTinCanImage };

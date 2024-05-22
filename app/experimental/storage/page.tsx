@@ -1,11 +1,9 @@
 "use server";
-import { test } from "@/actions/generation";
 import { listStorageImageUrls } from "@/actions/storage";
 import Image from "next/image";
 
 const StoragePage = async () => {
   const imageFilenames = await listStorageImageUrls();
-  await test();
   return (
     <div className='flex flex-col gap-8'>
       <h2>所有生成過的圖片都會被自動儲存至 Supabase Storage！</h2>

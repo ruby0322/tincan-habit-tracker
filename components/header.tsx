@@ -44,7 +44,7 @@ const Header = () => {
   }, []);
 
   return (
-    <header className='shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] bg-white shadow-sm'>
+    <header className='sm:w-[28rem] w-full fixed sm:top-[2vh] top-0 shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] bg-white shadow-sm'>
       <div className='h-[4.5rem] container mx-auto px-4 py-4 md:px-6 md:py-5 flex items-center justify-between'>
         <h1 className='text-2xl font-bold'>Tincan</h1>
         <div className='flex items-center gap-4'>

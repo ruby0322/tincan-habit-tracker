@@ -22,8 +22,6 @@ const ReminderPage = () => {
       username,
       title,
       goal,
-      completionStreak,
-      failureStreak
     );
     setResponse(res);
   };

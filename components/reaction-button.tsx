@@ -1,8 +1,12 @@
+import { reactToPost } from "@/actions/react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Reaction, ReactionType } from "@/type";
+import { createClient } from "@/utils/supabase/client";
 import {
   AngryIcon,
   Cat,
@@ -11,54 +15,15 @@ import {
   SmilePlus,
   ThumbsUpIcon,
 } from "lucide-react";
-
-const ReactionButton = () => {
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <SmilePlus className='text-gray-500 cursor-pointer w-6 h-6' />
-      </PopoverTrigger>
-      <PopoverContent
-        className='px-4 py-2 rounded-full w-fit'
-        sideOffset={12}
-        side='right'
-      >
-        <div className='flex gap-4 items-center'>
-          <ThumbsUpIcon className='cursor-pointer h-6 w-6 text-gray-500' />
-          <HeartIcon
-            className='cursor-pointer h-6 w-6 text-gray-500'
-            onClick={() => {}}
-          />
-          <LaughIcon
-            className='cursor-pointer h-6 w-6 text-gray-500'
-            onClick={() => {}}
-          />
-          <AngryIcon
-            className='cursor-pointer h-6 w-6 text-gray-500'
-            onClick={() => {}}
-          />
-          <PoopIcon
-            onClick={() => {}}
-            className='cursor-pointer h-6 w-6 text-gray-500'
-          />
-          <Cat
-            onClick={() => {}}
-            className='cursor-pointer h-6 w-6 text-gray-500'
-          />
-        </div>
-      </PopoverContent>
-    </Popover>
-  );
-};
-
-export default ReactionButton;
+import { useRouter } from "next/router";
+import { ReactNode } from "react";
 
 const PoopIcon = ({
   className,
   onClick,
 }: {
-  className: string;
-  onClick: () => void;
+  className?: string;
+  onClick?: () => void;
 }) => {
   return (
     <svg
@@ -97,3 +62,87 @@ const PoopIcon = ({
     </svg>
   );
 };
+
+export const REACTIONS: { [reactionType: string]: ReactNode } = {
+  like: <ThumbsUpIcon className='cursor-pointer h-6 w-6 text-gray-500' />,
+  rage: <AngryIcon className='cursor-pointer h-6 w-6 text-gray-500' />,
+  poop: <PoopIcon className='cursor-pointer h-6 w-6 text-gray-500' />,
+  laugh: <LaughIcon className='cursor-pointer h-6 w-6 text-gray-500' />,
+  meow: <Cat className='cursor-pointer h-6 w-6 text-gray-500' />,
+  heart: <HeartIcon className='cursor-pointer h-6 w-6 text-gray-500' />,
+};
+
+const ReactionButton = ({
+  postId,
+  userReaction,
+  onReact,
+}: {
+  postId: string;
+  userReaction?: Reaction;
+  onReact: (reactionType: ReactionType) => void;
+}) => {
+  const onClick = (reactionType: ReactionType) => {
+    return async () => {
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        const router = useRouter();
+        router.push("/login");
+        return false;
+      }
+
+      onReact(reactionType);
+      console.log("optimistically updated");
+      await reactToPost(user.id as string, postId, reactionType);
+      console.log("database updated");
+      return;
+    };
+  };
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <div
+          className={cn(
+            "rounded-full",
+            userReaction &&
+              "bg-gray-100 shadow-[inset_-12px_-8px_40px_#46464620]"
+          )}
+        >
+          {userReaction ? (
+            REACTIONS[userReaction.reaction_type]
+          ) : (
+            <SmilePlus className='text-gray-500 cursor-pointer w-6 h-6' />
+          )}
+        </div>
+      </PopoverTrigger>
+      <PopoverContent
+        className='px-4 py-2 rounded-full w-fit'
+        sideOffset={12}
+        side='right'
+      >
+        <div className='flex gap-2 items-center'>
+          {Object.keys(REACTIONS).map((reactionType) => {
+            return (
+              <div
+                key={`${postId}-reaction-${reactionType}`}
+                onClick={onClick(reactionType as ReactionType)}
+                className={cn(
+                  "rounded-full p-1",
+                  (userReaction?.reaction_type as string) === reactionType &&
+                    "bg-gray-100 shadow-[inset_-12px_-8px_40px_#46464620]"
+                )}
+              >
+                {REACTIONS[reactionType]}
+              </div>
+            );
+          })}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+};
+
+export default ReactionButton;
