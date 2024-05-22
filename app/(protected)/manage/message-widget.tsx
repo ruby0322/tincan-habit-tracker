@@ -14,7 +14,7 @@ const MessageWidget = ({ dailyHabits }: { dailyHabits: DailyHabit[] }) => {
     <Carousel
       plugins={[
         AutoPlay({
-          delay: 1200,
+          delay: 2000,
         }),
       ]}
       carouselOptions={{
