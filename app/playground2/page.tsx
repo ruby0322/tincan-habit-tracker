@@ -9,7 +9,8 @@ import{
 } from "@/actions/post";
 
 import{
-  followUser
+  followUser,
+  checkFollowing
 } from "@/actions/user";
 
 export default async function Playground2() {
@@ -45,6 +46,9 @@ export default async function Playground2() {
 
   //     const updatedProfile = await updateProfile(new_user_id, "大海怪");
   //     console.log("updated profile", updatedProfile);
+
+        //  const isFollowing = await checkFollowing(user_id, another_user);
+        //  console.log("isFollow", isFollowing);
   // } catch (error) {
   //     console.error("Error during backend function calls", error);
   // }

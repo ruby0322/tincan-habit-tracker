@@ -122,7 +122,7 @@ const CreatePage = () => {
         frequency={frequency}
         frequencySetter={setFrequency}
         onSubmit={() => {
-          fetchData(title, numDailyGoalUnit.toString() + dailyGoalUnit);
+          fetchData(title, numDailyGoalUnit.toString() + `(${dailyGoalUnit})`);
           console.log(
             "after create habit",
             userId,

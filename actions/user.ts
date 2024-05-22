@@ -2,6 +2,7 @@
 
 import { ProfileTable } from "@/type";
 import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
 
 const getUserProfile = async (user_id: string): Promise<ProfileTable> => {
   const supabase = createClient();
@@ -24,14 +25,14 @@ const getFollowers = async (user_id: string): Promise<ProfileTable[]> => {
     .from("follow")
     .select(`profile:follower_id(*)`)
     .eq("following_id", user_id)
-    .returns<ProfileTable[]>();
+    .returns<{ profile: ProfileTable }[]>();
   if (error) {
     throw new Error(`Error fetching followers: ${error.message}`);
   }
   if (!data || data.length === 0) {
     return [];
   }
-  return data;
+  return data.map(user => user.profile);
 };
 
 const getFollowings = async (user_id: string): Promise<ProfileTable[]> => {
@@ -40,14 +41,14 @@ const getFollowings = async (user_id: string): Promise<ProfileTable[]> => {
     .from("follow")
     .select(`profile:following_id(*)`)
     .eq("follower_id", user_id)
-    .returns<ProfileTable[]>();
+    .returns<{ profile: ProfileTable }[]>();
   if (error) {
     throw new Error(`Error fetching followings: ${error.message}`);
   }
   if (!data || data.length === 0) {
     return [];
   }
-  return data;
+  return data.map(user => user.profile);
 };
 
 const searchUser = async (username_substr: string): Promise<ProfileTable[]> => {
@@ -67,7 +68,8 @@ const searchUser = async (username_substr: string): Promise<ProfileTable[]> => {
 
 const followUser = async (
   follower_id: string,
-  following_id: string
+  following_id: string,
+  profile_id: string,
 ): Promise<boolean> => {
   const supabase = createClient();
   const { data, error } = await supabase
@@ -94,6 +96,7 @@ const followUser = async (
       throw new Error(`Error unfollowing user: ${error.message}`);
     }
   }
+  revalidatePath(`/profile/${profile_id}`)
   return true;
 };
 
@@ -168,6 +171,21 @@ const updateProfile = async (
   }
 };
 
+const checkFollowing = async (userA_id: string, userB_id: string): Promise<boolean> => {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("follow")
+    .select(`*`)
+    .match({ follower_id: userA_id, following_id: userB_id });
+  if (error) {
+    throw new Error(`Error fetching follow: ${error.message}`);
+  }
+  if (data.length === 0) {
+    return false;
+  }
+  return true;
+};
+
 export {
   createProfile,
   followUser,
@@ -176,4 +194,5 @@ export {
   getUserProfile,
   searchUser,
   updateProfile,
+  checkFollowing
 };
