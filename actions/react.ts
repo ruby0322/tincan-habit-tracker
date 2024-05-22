@@ -2,6 +2,7 @@
 
 import { ReactionType } from "@/type";
 import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
 
 const reactToPost = async (
   user_id: string,
@@ -30,8 +31,7 @@ const reactToPost = async (
   } else {
     // have react before
     const existingReaction = data[0];
-    console.log("hey = ", existingReaction);
-    if (existingReaction.reaction_type == reaction_type) {
+    if (existingReaction.reaction_type === reaction_type) {
       // delete reaction
       const { error } = await supabase
         .from("react_to")
@@ -52,6 +52,7 @@ const reactToPost = async (
       }
     }
   }
+  revalidatePath("/social");
   return true;
 };
 

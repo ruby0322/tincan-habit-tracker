@@ -26,7 +26,7 @@ export type PostWithReaction = PostTable & {
 };
 
 export type ReactionType = Enums<"reaction-type">;
-export type Reaction = ProfileTable & { reactionType: ReactionType };
+export type Reaction = ProfileTable & { reaction_type: ReactionType };
 
 export type Post = PostTable & {
   username: string;

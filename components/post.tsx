@@ -25,7 +25,7 @@ const ReactionRow = ({ reaction }: { reaction: Reaction }) => {
           </div>
         </div>
       </div>
-      {REACTIONS[reaction.reactionType]}
+      {REACTIONS[reaction.reaction_type]}
     </div>
   );
 };
@@ -44,6 +44,7 @@ const ReactionDrawer = ({ reactions }: { reactions: Reaction[] }) => {
           {Object.keys(REACTIONS).map((reactionType) => {
             return (
               <TabsTrigger
+                key={`reaction-tab-${reactionType}`}
                 value={reactionType}
                 className='flex gap-2 font-bold'
               >
@@ -51,7 +52,8 @@ const ReactionDrawer = ({ reactions }: { reactions: Reaction[] }) => {
                 <div>
                   {
                     reactions.filter(
-                      (reaction) => reaction.reactionType === reactionType
+                      (reaction) =>
+                        (reaction.reaction_type as string) === reactionType
                     ).length
                   }
                 </div>
@@ -74,7 +76,7 @@ const ReactionDrawer = ({ reactions }: { reactions: Reaction[] }) => {
               value={reactionType}
             >
               {reactions
-                .filter((reaction) => reaction.reactionType === reactionType)
+                .filter((reaction) => reaction.reaction_type === reactionType)
                 .map((reaction, index) => {
                   return (
                     <ReactionRow
@@ -95,7 +97,6 @@ const Post = ({ post, userId }: { post: PostType; userId: string }) => {
   const userReaction = post.reactions
     .filter((reaction) => reaction.user_id === userId)
     .at(0);
-  console.log(userReaction);
 
   return (
     <div className='p-2 md:p-4 h-fit flex flex-col gap-4 bg-white'>

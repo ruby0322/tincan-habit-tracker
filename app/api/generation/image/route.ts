@@ -48,14 +48,12 @@ export async function POST(request: Request): Promise<Response> {
           : "sad"
         : ""
     }`;
-    console.log(prompt);
     const response = await openai.images.generate({
       model: "dall-e-3",
       prompt,
       n: 1,
       size: "1024x1024",
     });
-    console.log(response.data);
     const res = await fetch(response.data[0].url as string);
     const imageBlob = await res.blob();
     const storageImageUrl = await storeImageToStorage(imageBlob);
