@@ -2,6 +2,7 @@
 
 import { DailyHabit, HabitTable, LightHabit } from "@/type";
 import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
 
 const getDailyHabits = async (
   creator_user_id: string
@@ -83,7 +84,7 @@ const createHabit = async (
     console.error("Error creating habit", error);
     return false;
   }
-
+  revalidatePath("/manage");
   return true;
 };
 
