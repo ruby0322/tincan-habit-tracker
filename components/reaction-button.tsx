@@ -75,9 +75,11 @@ export const REACTIONS: { [reactionType: string]: ReactNode } = {
 const ReactionButton = ({
   postId,
   userReaction,
+  onReact,
 }: {
   postId: string;
   userReaction?: Reaction;
+  onReact: (reactionType: ReactionType) => void;
 }) => {
   const onClick = (reactionType: ReactionType) => {
     return async () => {
@@ -92,13 +94,29 @@ const ReactionButton = ({
         return false;
       }
 
-      return await reactToPost(user.id as string, postId, reactionType);
+      onReact(reactionType);
+      console.log("optimistically updated");
+      await reactToPost(user.id as string, postId, reactionType);
+      console.log("database updated");
+      return;
     };
   };
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <SmilePlus className='text-gray-500 cursor-pointer w-6 h-6' />
+        <div
+          className={cn(
+            "rounded-full",
+            userReaction &&
+              "bg-gray-100 shadow-[inset_-12px_-8px_40px_#46464620]"
+          )}
+        >
+          {userReaction ? (
+            REACTIONS[userReaction.reaction_type]
+          ) : (
+            <SmilePlus className='text-gray-500 cursor-pointer w-6 h-6' />
+          )}
+        </div>
       </PopoverTrigger>
       <PopoverContent
         className='px-4 py-2 rounded-full w-fit'
