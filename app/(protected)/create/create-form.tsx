@@ -72,9 +72,9 @@ const CreateForm = ({
   };
 
   const getSetter = (key: string) => frequencySetter((prevFreq: { [weekday: string]: boolean }) => { 
-    prevFreq[key] = !prevFreq[key];
-    // console.log(prevFreq);
-    return prevFreq;
+    const newFreq = { ...prevFreq, [key]: !prevFreq[key] };
+    console.log(newFreq);
+    return newFreq;
   });
 
   return (

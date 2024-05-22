@@ -7,10 +7,12 @@ import { createHabit } from "@/actions/habit";
 import { createClient } from "@/utils/supabase/client";
 import { generateHabitReminder } from "@/actions/generation";
 import { getUserProfile } from "@/actions/user";
+import { useRouter } from "next/navigation";
 
 const CreatePage = () => {
 
   const today = new Date();
+  const router = useRouter();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
@@ -75,7 +77,9 @@ const CreatePage = () => {
         setImageUrl(""); // Handle error: reset response or set an error message
       } finally {
         setLoading(false);
-        createHabit(user.user?.id, title, imageUrlTest, res, numDailyGoalUnit, dailyGoalUnit, startDate, endDate, frequency);
+        console.log('freq:', frequency);
+        await createHabit(user.user?.id, title, imageUrlTest, res, numDailyGoalUnit, dailyGoalUnit, startDate, endDate, frequency);
+        router.push("/manage");
       }
     }
     
@@ -116,7 +120,7 @@ const CreatePage = () => {
         frequencySetter={setFrequency}
         onSubmit={() => {
           fetchData(title, numDailyGoalUnit.toString() + dailyGoalUnit);
-          // console.log('test', userId, title, imageUrl, message, numDailyGoalUnit, dailyGoalUnit, startDate, endDate, frequency);
+          console.log('after create habit', userId, title, imageUrl, message, numDailyGoalUnit, dailyGoalUnit, startDate, endDate, frequency);
         }}
       />
     </div>
