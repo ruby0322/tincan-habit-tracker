@@ -12,9 +12,20 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { followUser } from "@/actions/user"
+import { createClient } from "@/utils/supabase/client";
 
-const UserRow = ({ username, avatar, isFollowing}: {username: string, avatar: string, isFollowing: Boolean}) => {
+const UserRow = ({ username, user_id, avatar, isFollowing, profile_id}: {username: string, user_id: string, avatar: string, isFollowing: Boolean, profile_id: string}) => {
     
+    const handleClickFollow = async () => {
+        const supabase = createClient();
+        const {
+            data: { user },
+          } = await supabase.auth.getUser();
+        followUser(user?.id as string, user_id, profile_id);
+        console.log(username);
+    }
+
     return (
         <div>
           <Card className="w-[400px] h-[60px]">
@@ -24,11 +35,11 @@ const UserRow = ({ username, avatar, isFollowing}: {username: string, avatar: st
                     <div className="flex items-center">
                         <Avatar>
                             <AvatarImage src={avatar} alt="@shadcn" />
-                            <AvatarFallback>CN</AvatarFallback>
+                            <AvatarFallback>{username}</AvatarFallback>
                         </Avatar>
                         <div className="ml-4">{username}</div>
                     </div>
-                    <Button size="sm">追蹤</Button>
+                    {isFollowing ? <Button variant="secondary" onClick={handleClickFollow}>追蹤中</Button>: <Button size="sm" onClick={handleClickFollow}>追蹤</Button>}
                 </div>
                 </div>
             </CardContent>

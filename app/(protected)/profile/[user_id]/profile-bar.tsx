@@ -17,10 +17,21 @@ import {
 
 
 import { createClient } from "@/utils/supabase/client";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
-const ProfileBar = ({ username, email, isMe }: { username: string, email?: string, isMe: Boolean }) => {
+const ProfileBar = ({ username, email, isMe, avatar }: { username: string, email?: string, isMe: Boolean, avatar: string }) => {
+
+    const onAvatarClick = async () => {
+        return;
+    }
     return (
-        <div className="flex justify-between p-4">
+        <div className="flex flex-col items-center justify-between p-4 gap-4">
+        <div>
+        <Avatar className="w-32 h-32 cursor-pointer" onClick={onAvatarClick}>
+            <AvatarImage src={avatar} alt="@shadcn" />
+            <AvatarFallback>{username}</AvatarFallback>
+        </Avatar>
+        </div>
         <div>
         <Card className="w-[400px]">
         <CardContent>

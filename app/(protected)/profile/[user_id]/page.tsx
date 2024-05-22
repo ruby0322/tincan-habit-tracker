@@ -20,8 +20,9 @@ import {
 
 import { createClient } from "@/utils/supabase/server";
 import ProfileBar from "./profile-bar";
-import { getUserProfile } from "@/actions/user";
+import { getFollowers, getFollowings, getUserProfile } from "@/actions/user";
 import UserRow from "./user-row";
+import { checkFollowing } from "@/actions/user";
 
 const ProfilePage = async ({ params }: { params: { user_id: string } }) => {
   const supabase = createClient();
@@ -31,39 +32,14 @@ const ProfilePage = async ({ params }: { params: { user_id: string } }) => {
   const userId = user?.id;
   const userProfile = await getUserProfile(userId as string);
 
-  const fakeFollowers = [
-    {
-      avatar_url: "https://dmbkhireuarjpvecjmds.supabase.co/storage/v1/object/public/image/dalle-image-ac331e4b-3ff1-48b5-9da2-01977c6eee94",
-      user_id: "a",
-      username: "minmin",
-    },
-    {
-      avatar_url: "https://dmbkhireuarjpvecjmds.supabase.co/storage/v1/object/public/image/dalle-image-ac331e4b-3ff1-48b5-9da2-01977c6eee94",
-      user_id: "b",
-      username: "ruby",
-    },
-    {
-      avatar_url: "https://dmbkhireuarjpvecjmds.supabase.co/storage/v1/object/public/image/dalle-image-ac331e4b-3ff1-48b5-9da2-01977c6eee94",
-      user_id: "c",
-      username: "fluffy",
-    },
-    {
-      avatar_url: "https://dmbkhireuarjpvecjmds.supabase.co/storage/v1/object/public/image/dalle-image-ac331e4b-3ff1-48b5-9da2-01977c6eee94",
-      user_id: "d",
-      username: "morris",
-    },
-    {
-      avatar_url: "https://dmbkhireuarjpvecjmds.supabase.co/storage/v1/object/public/image/dalle-image-ac331e4b-3ff1-48b5-9da2-01977c6eee94",
-      user_id: "e",
-      username: "ja",
-    }
-  ]
+  const followers = await getFollowers(user?.id as string);
+  const followings = await getFollowings(user?.id as string);
 
   return (
     <div>
       {/* { userId === params.user_id && } */}
       {/* 上半部（個人資料） */}
-      <ProfileBar username={userProfile.username as string} email={user?.email as string} isMe={user?.id == params.user_id}/>
+      <ProfileBar username={userProfile.username as string} email={user?.email as string} isMe={user?.id == params.user_id} avatar={userProfile.avatar_url as string}/>
       {/* 下半部（追蹤） */}
       <div className="p-4">
         <Tabs defaultValue="follower" className="w-[400px]">
@@ -72,55 +48,22 @@ const ProfilePage = async ({ params }: { params: { user_id: string } }) => {
           <TabsTrigger value="following">追蹤中</TabsTrigger>
         </TabsList>
         <TabsContent value="follower">
-          {fakeFollowers.map((fakeFollower) => {
+          {followers.map( async (follower) => {
+            const isFollowing = await checkFollowing(user?.id as string, follower.user_id);
             return (
-              <UserRow username={fakeFollower.username} avatar={fakeFollower.avatar_url} isFollowing={true} />
+              <UserRow key={`user-row-${follower.user_id}`} username={follower.username} user_id={follower.user_id} avatar={follower.avatar_url as string} isFollowing={isFollowing} profile_id={params.user_id}/>
             )
           })}
-          {/* <Card>
-            <CardHeader>
-              <CardTitle>粉絲</CardTitle>
-              <CardDescription>
-                Make changes to your account here. Click save when you're done.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="space-y-1">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" defaultValue="Pedro Duarte" />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="username">Username</Label>
-                <Input id="username" defaultValue="@peduarte" />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button>Save changes</Button>
-            </CardFooter>
-          </Card> */}
+          
         </TabsContent>
         <TabsContent value="following">
-          <Card>
-            <CardHeader>
-              <CardTitle>追蹤中</CardTitle>
-              <CardDescription>
-                Change your password here. After saving, you'll be logged out.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="space-y-1">
-                <Label htmlFor="current">Current password</Label>
-                <Input id="current" type="password" />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="new">New password</Label>
-                <Input id="new" type="password" />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button>Save password</Button>
-            </CardFooter>
-          </Card>
+        {followings.map( async (following) => {
+            const isFollowing = await checkFollowing(user?.id as string, following.user_id);
+            return (
+              <UserRow key={`user-row-${following.user_id}`} username={following.username} user_id={following.user_id} avatar={following.avatar_url as string} isFollowing={isFollowing} profile_id={params.user_id}/>
+            )
+          })}
+          
         </TabsContent>
       </Tabs>
       </div>
