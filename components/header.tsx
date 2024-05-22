@@ -34,7 +34,7 @@ const Header = () => {
         .from("profile")
         .select()
         .eq("user_id", user?.id);
-      if (profiles) {
+      if (profiles && profiles.length > 0) {
         setUsername(profiles[0].username);
         setAvatarUrl(profiles[0].avatar_url);
       }
