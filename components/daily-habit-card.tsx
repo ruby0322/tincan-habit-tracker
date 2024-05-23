@@ -1,9 +1,22 @@
+"use client";
+
+import {
+  decrementCompletedUnit,
+  incrementCompletedUnit,
+} from "@/actions/record";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { DailyHabit } from "@/type";
 import Image from "next/image";
 
 const DailyHabitCard = ({ dailyHabit }: { dailyHabit: DailyHabit }) => {
+  const onAddClick = async () => {
+    await incrementCompletedUnit(dailyHabit.habit_id);
+  };
+
+  const onMinusClick = async () => {
+    await decrementCompletedUnit(dailyHabit.habit_id);
+  };
   return (
     <div className='bg-white rounded-lg shadow-sm py-4 px-5 h-full flex-col flex justify-between items-center'>
       <h2 className='w-full text-center text-lg font-semibold'>
@@ -23,7 +36,11 @@ const DailyHabitCard = ({ dailyHabit }: { dailyHabit: DailyHabit }) => {
         }
       />
       <div className='flex items-center w-full justify-between'>
-        <Button className='w-8 h-8 rounded-full' variant='outline'>
+        <Button
+          onClick={onMinusClick}
+          className='w-8 h-8 rounded-full'
+          variant='outline'
+        >
           -
         </Button>
         <div className='flex flex-col items-center justify-center'>
@@ -34,7 +51,11 @@ const DailyHabitCard = ({ dailyHabit }: { dailyHabit: DailyHabit }) => {
             ({dailyHabit.daily_goal_unit})
           </p>
         </div>
-        <Button className='w-8 h-8 rounded-full' variant='outline'>
+        <Button
+          onClick={onAddClick}
+          className='w-8 h-8 rounded-full'
+          variant='outline'
+        >
           +
         </Button>
       </div>
