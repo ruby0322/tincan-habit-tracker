@@ -20,16 +20,12 @@ const getDailyHabits = async (
   const dayOfWeek = weekDays[new Date().getDay()];
 
   const { data: habits, error: habitsError } = await supabase
-    .from('habit')
-    .select('*')
-    .eq('creator_user_id', creator_user_id)
-    .filter(
-      `frequency->>${dayOfWeek}`,
-      'eq',
-      true
-    );
+    .from("habit")
+    .select("*")
+    .eq("creator_user_id", creator_user_id)
+    .filter(`frequency->>${dayOfWeek}`, "eq", true);
 
-  if(habitsError){
+  if (habitsError) {
     console.error("Error fetching daily habits", habitsError);
     return [];
   }
@@ -38,25 +34,27 @@ const getDailyHabits = async (
     return [];
   }
 
-  const {data: records, error: recordsError} = await supabase
-    .from('record')
-    .select('habit_id, num_completed_unit')
-    .eq('creator_user_id', creator_user_id)
-  
+  const { data: records, error: recordsError } = await supabase
+    .from("record")
+    .select("habit_id, num_completed_unit")
+    .eq("creator_user_id", creator_user_id);
+
   if (recordsError) {
     console.error("Error fetching records", recordsError);
-    return habits.map(habit => ({
+    return habits.map((habit) => ({
       ...habit,
       num_completed_unit: 0,
     }));
   }
-  
-  const recordsMap: { [key: string]: number } = (records as RecordTable[]).reduce<{ [key: string]: number }>((acc, record) => {
+
+  const recordsMap: { [key: string]: number } = (
+    records as RecordTable[]
+  ).reduce<{ [key: string]: number }>((acc, record) => {
     acc[record.habit_id] = record.num_completed_unit;
     return acc;
   }, {});
 
-  const dailyHabits: DailyHabit[] = (habits as HabitTable[]).map(habit => ({
+  const dailyHabits: DailyHabit[] = (habits as HabitTable[]).map((habit) => ({
     ...habit,
     num_completed_unit: recordsMap[habit.habit_id] || 0,
   }));
@@ -64,7 +62,9 @@ const getDailyHabits = async (
   return dailyHabits;
 };
 
-const getLightHabits = async (creator_user_id: string): Promise<LightHabit[]> => {
+const getLightHabits = async (
+  creator_user_id: string
+): Promise<LightHabit[]> => {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("habit")
@@ -75,10 +75,10 @@ const getLightHabits = async (creator_user_id: string): Promise<LightHabit[]> =>
     console.error("Error fetching light habits", error);
     return [];
   }
-  
-  return data.map(habit => ({
+
+  return data.map((habit) => ({
     habit_id: habit.habit_id,
-    title: habit.title
+    title: habit.title,
   }));
 };
 
