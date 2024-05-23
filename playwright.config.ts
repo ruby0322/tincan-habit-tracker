@@ -73,5 +73,8 @@ export default defineConfig({
     command: "yarn dev",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
+    timeout: 300000,
+    stdout: "pipe",
+    stderr: "pipe",
   },
 });
