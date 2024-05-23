@@ -39,13 +39,13 @@ export default async function Playground() {
           new Date("2022-03-25"),
           new Date("2024-05-23"),
           {
-            "Fri": false,
             "Mon": true,
+            "Tue": true,
+            "Wed": true,
+            "Thu": false,
+            "Fri": false,
             "Sat": true,
             "Sun": true,
-            "Thu": false,
-            "Tue": true,
-            "Wed": true
           },
         );
     };
