@@ -1,9 +1,32 @@
 "use server";
 
-import { getAllPosts } from "@/actions/post";
+import { getAllPosts, getFollowingUserPosts } from "@/actions/post";
 import Post from "@/components/post";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createClient } from "@/utils/supabase/server";
+
+const FollowingUserPosts = async ({ userId }: { userId: string }) => {
+  const followingUserPosts = await getFollowingUserPosts(userId);
+  return (
+    <>
+      {followingUserPosts.map((post, index) => {
+        return <Post userId={userId} key={`post-${index}`} post={post} />;
+      })}
+    </>
+  );
+};
+
+const PopularPosts = async ({ userId }: { userId: string }) => {
+  const followingUserPosts = await getAllPosts();
+  console.log(followingUserPosts);
+  return (
+    <>
+      {followingUserPosts.map((post, index) => {
+        return <Post userId={userId} key={`post-${index}`} post={post} />;
+      })}
+    </>
+  );
+};
 
 const SocialPage = async () => {
   const supabase = createClient();
@@ -11,8 +34,6 @@ const SocialPage = async () => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const posts = await getAllPosts();
 
   return (
     <Tabs defaultValue='friends' className='w-full p-4 border-0'>
@@ -23,17 +44,11 @@ const SocialPage = async () => {
           <TabsTrigger value='community'>社群活動</TabsTrigger>
         </TabsList>
         <TabsContent className='overflow-y-scorll' value='friends'>
-          {posts.map((post, index) => {
-            return (
-              <Post
-                userId={user?.id as string}
-                key={`post-${index}`}
-                post={post}
-              />
-            );
-          })}
+          <FollowingUserPosts userId={user?.id as string} />
         </TabsContent>
-        <TabsContent value='popular'>施工中 87</TabsContent>
+        <TabsContent value='popular'>
+          <PopularPosts userId={user?.id as string} />
+        </TabsContent>
         <TabsContent value='community'>目前沒有活動喔 87</TabsContent>
       </div>
     </Tabs>

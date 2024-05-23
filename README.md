@@ -2,6 +2,8 @@
 
 Welcome to the Tin Can Habit Tracker! This project leverages Next.js, TypeScript, Tailwind CSS, Shadcn, and Supabase to provide a robust solution for tracking daily habits. It's designed to be simple, intuitive, and effective for personal productivity enthusiasts.
 
+[![Playwright Tests](https://github.com/ruby0322/tincan-habit-tracker/actions/workflows/playwright.yml/badge.svg)](https://github.com/ruby0322/tincan-habit-tracker/actions/workflows/playwright.yml)
+
 ## Features
 
 - **Habit Tracking**: Track your daily habits with ease.

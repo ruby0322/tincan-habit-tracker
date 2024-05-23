@@ -32,7 +32,7 @@ const getFollowers = async (user_id: string): Promise<ProfileTable[]> => {
   if (!data || data.length === 0) {
     return [];
   }
-  return data.map(user => user.profile);
+  return data.map((user) => user.profile);
 };
 
 const getFollowings = async (user_id: string): Promise<ProfileTable[]> => {
@@ -48,7 +48,7 @@ const getFollowings = async (user_id: string): Promise<ProfileTable[]> => {
   if (!data || data.length === 0) {
     return [];
   }
-  return data.map(user => user.profile);
+  return data.map((user) => user.profile);
 };
 
 const searchUser = async (username_substr: string): Promise<ProfileTable[]> => {
@@ -69,7 +69,7 @@ const searchUser = async (username_substr: string): Promise<ProfileTable[]> => {
 const followUser = async (
   follower_id: string,
   following_id: string,
-  profile_id: string,
+  profile_id: string
 ): Promise<boolean> => {
   const supabase = createClient();
   const { data, error } = await supabase
@@ -96,7 +96,7 @@ const followUser = async (
       throw new Error(`Error unfollowing user: ${error.message}`);
     }
   }
-  revalidatePath(`/profile/${profile_id}`)
+  revalidatePath(`/profile/${profile_id}`);
   return true;
 };
 
@@ -163,7 +163,7 @@ const updateProfile = async (
     if (error) {
       throw new Error(`Error updating profile data: ${error.message}`);
     }
-
+    revalidatePath(`/profiel/${user_id}`);
     return true;
   } catch (error) {
     console.error(error);
@@ -171,7 +171,10 @@ const updateProfile = async (
   }
 };
 
-const checkFollowing = async (userA_id: string, userB_id: string): Promise<boolean> => {
+const checkFollowing = async (
+  userA_id: string,
+  userB_id: string
+): Promise<boolean> => {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("follow")
@@ -187,6 +190,7 @@ const checkFollowing = async (userA_id: string, userB_id: string): Promise<boole
 };
 
 export {
+  checkFollowing,
   createProfile,
   followUser,
   getFollowers,
@@ -194,5 +198,4 @@ export {
   getUserProfile,
   searchUser,
   updateProfile,
-  checkFollowing
 };
