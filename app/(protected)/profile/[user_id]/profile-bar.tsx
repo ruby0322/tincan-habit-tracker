@@ -19,7 +19,7 @@ const ProfileBar = ({
   userId: string;
   username: string;
   email?: string;
-  isMe: Boolean;
+  isMe: boolean;
   avatar: string;
 }) => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
