@@ -16,7 +16,7 @@ import {
   ThumbsUpIcon,
 } from "lucide-react";
 import { useRouter } from "next/router";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 
 const PoopIcon = ({
   className,
@@ -81,6 +81,7 @@ const ReactionButton = ({
   userReaction?: Reaction;
   onReact: (reactionType: ReactionType) => void;
 }) => {
+  const [open, setOpen] = useState<boolean>(false);
   const onClick = (reactionType: ReactionType) => {
     return async () => {
       const supabase = createClient();
@@ -95,6 +96,7 @@ const ReactionButton = ({
       }
 
       onReact(reactionType);
+      setOpen(false);
       console.log("optimistically updated");
       await reactToPost(user.id as string, postId, reactionType);
       console.log("database updated");
@@ -102,7 +104,7 @@ const ReactionButton = ({
     };
   };
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={(open) => setOpen(open)}>
       <PopoverTrigger asChild>
         <div
           className={cn(

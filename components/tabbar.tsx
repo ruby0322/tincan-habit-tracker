@@ -37,42 +37,39 @@ const Tabbar = async () => {
           <AlarmClock />
         </Link>
         <div className='cursor-pointer relative flex items-center justify-center'>
-          <div className='shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] absolute -top-12 flex h-14 w-14 items-center justify-center rounded-full bg-gray-800 shadow-lg transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950'>
-            <Popover>
-              <PopoverTrigger asChild>
+          <Popover>
+            <PopoverTrigger asChild>
+              <div className='bg-gray-900 shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] absolute -top-12 flex h-14 w-14 items-center justify-center rounded-full shadow-lg'>
                 <PlusIcon className='h-6 w-6 text-gray-100' />
-              </PopoverTrigger>
-              <PopoverContent
-                sideOffset={12}
-                className='flex gap-4 y-10 w-fit bg-sky-500/0 border-0 shadow-none'
-              >
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Link href='/create'>
-                        <div className='p-4 bg-gray-100 rounded-full shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] cursor-pointer'>
-                          <CalendarPlus2 />
-                        </div>
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent>建立習慣</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Link href='/social'>
-                        <div className='p-4 bg-gray-100 rounded-full shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] cursor-pointer'>
-                          <SquarePen />
-                        </div>
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent>建立貼文</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </PopoverContent>
-            </Popover>
-          </div>
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className='flex gap-4 y-10 w-fit bg-sky-500/0 border-0 shadow-none'>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href='/create'>
+                      <div className='p-4 bg-gray-100 rounded-full shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] cursor-pointer border-2 border-gray-800'>
+                        <CalendarPlus2 />
+                      </div>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>建立習慣</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href='/social'>
+                      <div className='p-4 bg-gray-100 rounded-full shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] cursor-pointer border-2 border-gray-800'>
+                        <SquarePen />
+                      </div>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>建立貼文</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </PopoverContent>
+          </Popover>
         </div>
         <Link href='/report' className='text-gray-400 text-lg text-center'>
           <AreaChart />
