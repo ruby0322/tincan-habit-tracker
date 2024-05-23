@@ -8,13 +8,13 @@ const getDailyHabits = async (
   creator_user_id: string
 ): Promise<DailyHabit[]> => {
   const weekDays: { [weekday: string]: string } = {
-    一: "Mon",
-    二: "Tue",
-    三: "Wed",
-    四: "Thu",
-    五: "Fri",
-    六: "Sat",
-    日: "Sun",
+    0: "Mon",
+    1: "Tue",
+    2: "Wed",
+    3: "Thu",
+    4: "Fri",
+    5: "Sat",
+    6: "Sun",
   };
   const supabase = createClient();
   const dayOfWeek = weekDays[new Date().getDay()];
@@ -31,13 +31,19 @@ const getDailyHabits = async (
   }
 
   if (!habits || habits.length === 0) {
+    console.log("No habits found");
     return [];
   }
 
+  const habitIds = habits.map((habit: HabitTable) => habit.habit_id);
+  // console.log(habitIds);
+  const today = new Date().toISOString().split("T")[0];
   const { data: records, error: recordsError } = await supabase
     .from("record")
     .select("habit_id, num_completed_unit")
-    .eq("creator_user_id", creator_user_id);
+    .in("habit_id", habitIds)
+    .gte("created_at", `${today}T00:00:00.000Z`)
+    .lte("created_at", `${today}T23:59:59.999Z`);
 
   if (recordsError) {
     console.error("Error fetching records", recordsError);
