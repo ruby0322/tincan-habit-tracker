@@ -12,31 +12,32 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import Calendar from "./calendar";
+import { LightHabit } from "@/type";
 
-const lightHabits = [
-  {
-    habit_id: "idaaaaa",
-    title: "喝水",
-  },
-  {
-    habit_id: "idbbbbb",
-    title: "健身",
-  },
-  {
-    habit_id: "idccccc",
-    title: "打羽球",
-  },
-  {
-    habit_id: "idddddd",
-    title: "摸貓咪",
-  },
-  {
-    habit_id: "ideeeee",
-    title: "踹狗",
-  },
-];
+// const lightHabits = [
+//   {
+//     habit_id: "idaaaaa",
+//     title: "喝水",
+//   },
+//   {
+//     habit_id: "idbbbbb",
+//     title: "健身",
+//   },
+//   {
+//     habit_id: "idccccc",
+//     title: "打羽球",
+//   },
+//   {
+//     habit_id: "idddddd",
+//     title: "摸貓咪",
+//   },
+//   {
+//     habit_id: "ideeeee",
+//     title: "踹狗",
+//   },
+// ];
 
-const SelectHabit = () => {
+const SelectHabit = ({ lightHabits }: { lightHabits: LightHabit[] }) => {
   const [open, setOpen] = React.useState(false);
   const [habitId, setHabitId] = React.useState("");
   // habitId 存目前選擇哪個 habit 的 id，目前應該沒有總完成率這個選項，有空可以再加

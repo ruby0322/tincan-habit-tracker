@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/resizable";
 import { useEffect, useState } from "react";
 import { CalendarBar } from "./calendar-bar";
+import { color } from "framer-motion";
 
 function getDaysInMonth(month: number, year: number) {
   var date = new Date(year, month, 1);
@@ -78,11 +79,11 @@ const Calendar = ({ habit_id }: { habit_id: string }) => {
   }, [month, year]);
 
   return (
-    <div className='w-full'>
+    <div className='w-[400px]'>
       <div className='py-4'>
         <CalendarBar onMonthChange={setMonth} onYearChange={setYear} />
       </div>
-      <div>{habit_id}</div>
+      {/* <div>{habit_id}</div> */}
 
       <ResizablePanelGroup
         direction='vertical'
@@ -110,7 +111,7 @@ const Calendar = ({ habit_id }: { habit_id: string }) => {
             <div key={weekIndex} className='px-2 pt-2'>
               <div className='flex h-full items-center justify-between'>
                 {week.map((day, dayIndex) => (
-                  <div key={dayIndex} className='text-center w-8 h-8'>
+                  <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full bg-red-300'>
                     {day !== 0 ? day : ""}
                   </div>
                 ))}
@@ -119,9 +120,9 @@ const Calendar = ({ habit_id }: { habit_id: string }) => {
           ))}
         </ResizablePanel>
       </ResizablePanelGroup>
-      <div className='p-4 flex justify-center item-center'>
+      <div className='p-4 flex justify-between items-center'>
         {/* <ProgressBar habit_id={habitId}/> */}
-        <Progress value={progress} className='h-4' />
+        <Progress value={progress} className='h-4'/>
         <div className='px-4 text-xl italic font-bold'>
           {progress.toString() + "%"}
         </div>
