@@ -156,8 +156,21 @@ const Post = ({ post, userId }: { post: PostType; userId: string }) => {
         <Drawer>
           <DrawerTrigger asChild>
             <div className='cursor-pointer font-bold text-base text-gray-700 flex gap-1'>
-              <div className='underline'>{post.reactions.length} 個人</div>
-              <div>按了這篇貼文表情</div>
+              {post.reactions.length > 0 ? (
+                <>
+                  <div className='underline'>
+                    {userReaction
+                      ? "你" +
+                        (post.reactions.length > 1
+                          ? `和其他 ${post.reactions.length - 1} 個人`
+                          : "")
+                      : `${post.reactions.length} 個人`}
+                  </div>
+                  <div>按了這篇貼文表情</div>
+                </>
+              ) : (
+                <div>成為第一個按篇貼文表情的人</div>
+              )}
             </div>
           </DrawerTrigger>
           <DrawerContent className='min-h-[50vh] flex flex-col overflow-y-scroll'>
