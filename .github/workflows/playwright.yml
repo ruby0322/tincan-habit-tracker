@@ -9,6 +9,9 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
+    - uses: oNaiPs/secrets-to-env-action@v1
+      with:
+        secrets: ${{ toJSON(secrets) }}
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
@@ -18,7 +21,7 @@ jobs:
     - name: Install Playwright Browsers
       run: yarn playwright install --with-deps
     - name: Run Playwright tests
-      run: yarn playwright test
+      run: yarn test
     - uses: actions/upload-artifact@v4
       if: always()
       with:
