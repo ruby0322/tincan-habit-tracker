@@ -14,7 +14,7 @@ const MessageWidget = ({ dailyHabits }: { dailyHabits: DailyHabit[] }) => {
     <Carousel
       plugins={[
         AutoPlay({
-          delay: 1200,
+          delay: 2000,
         }),
       ]}
       carouselOptions={{
@@ -34,7 +34,7 @@ const MessageWidget = ({ dailyHabits }: { dailyHabits: DailyHabit[] }) => {
               className='w-8 h-8 rounded-full'
               width='1024'
               height='1024'
-              src='https://dmbkhireuarjpvecjmds.supabase.co/storage/v1/object/public/image/dalle-image-1984271e-b00b-4b5a-8211-7617ed80ac56'
+              src={dailyHabit.picture_url}
             />
             <div className='text-wrap text-ellipsis overflow-hidden ... h-fit justify-between bg-gray-100 rounded-lg px-4 py-2 flex gap-6'>
               {dailyHabit.message}

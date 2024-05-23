@@ -1,5 +1,18 @@
 "use server";
 
+import{
+  createPost,
+  deletePost,
+  getAllPosts,
+  getFollowingUserPosts,
+  getMyPosts,
+} from "@/actions/post";
+
+import{
+  followUser,
+  checkFollowing
+} from "@/actions/user";
+
 export default async function Playground2() {
   const user_id = "92a75107-0564-4dae-8be0-29665aaccf2b";
   const another_user = "fafa45d2-9920-4d80-ad35-af748fed4b68";
@@ -25,31 +38,37 @@ export default async function Playground2() {
   //     const searchResults = await searchUser(username_substr);
   //     console.log("Search Results", searchResults);
 
-  //     const followResult = await followUser(another_user, user_id);
-  //     console.log("Follow Result", followResult);
+      // const followResult = await followUser(new_user_id, user_id);
+      // console.log("Follow Result", followResult);
 
   //     const newProfile = await createProfile(new_user_id);
   //     console.log("New profile", newProfile);
 
   //     const updatedProfile = await updateProfile(new_user_id, "大海怪");
   //     console.log("updated profile", updatedProfile);
+
+        //  const isFollowing = await checkFollowing(user_id, another_user);
+        //  console.log("isFollow", isFollowing);
   // } catch (error) {
   //     console.error("Error during backend function calls", error);
   // }
 
   //test posts
   // try {
-  //     const newPosts = await createPost(user_id, habit_id, content);
-  //     console.log("new posts", newPosts);
+      // const newPosts = await createPost(new_user_id, habit_id, content);
+      // console.log("new posts", newPosts);
 
   //     const deletePosts = await deletePost(post_id);
   //     console.log("delete post", deletePosts);
 
-  //     const myPosts = await getMyPosts(new_user_id);
-  //     console.log("me post", myPosts);
+      // const myPosts = await getMyPosts(new_user_id);
+      // console.log("me post", myPosts);
 
-  //     const allPosts = await getAllPosts();
-  //     console.log("all posts", allPosts);
+      // const allPosts = await getAllPosts();
+      // console.log("all posts", allPosts);
+
+      // const followersPosts = await getFollowingUserPosts(new_user_id);
+      // console.log("follower posts", followersPosts);
 
   // } catch (error) {
   //     console.error("Error during backend function calls", error);

@@ -22,11 +22,34 @@ export const metadata = {
   description: "Tin can, can you?",
 };
 
-export default function RootLayout({
+const setupTheme = () => {
+  // if (
+  //   localStorage.theme === "dark" ||
+  //   (!("theme" in localStorage) &&
+  //     window.matchMedia("(prefers-color-scheme: dark)").matches)
+  // ) {
+  //   document.documentElement.classList.add("dark");
+  // } else {
+  //   document.documentElement.classList.remove("dark");
+  // }
+
+  // Whenever the user explicitly chooses light mode
+  localStorage.theme = "light";
+
+  // Whenever the user explicitly chooses to respect the OS preference
+  localStorage.removeItem("theme");
+};
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  if (typeof window !== "undefined") {
+    // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+    setupTheme();
+  }
+
   return (
     <html lang='en' className={GeistSans.className}>
       <body
@@ -36,9 +59,11 @@ export default function RootLayout({
         )}
       >
         <main className='min-h-screen flex flex-col items-center justify-center light'>
-          <div className='flex flex-col md:h-[96vh] h-screen w-full max-w-[28rem] md:shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset] overflow-y-scroll'>
+          <div className='flex flex-col sm:h-[96vh] h-screen  w-full max-w-[28rem] sm:shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]'>
             <Header />
-            <div className='flex-1'>{children}</div>
+            <div className='flex-1 overflow-y-scroll mt-[4.5rem] mb-[4.5rem]'>
+              {children}
+            </div>
             <Tabbar />
           </div>
         </main>

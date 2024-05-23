@@ -1,33 +1,171 @@
 "use server";
 
-import { PostTable } from "@/type";
+import { Post } from "@/type";
 import { createClient } from "@/utils/supabase/server";
 
-const getMyPosts = async (user_id: string): Promise<PostTable[]> => {
+const getMyPosts = async (user_id: string): Promise<Post[]> => {
   const supabase = createClient();
-  const { data, error } = await supabase
+  const { data: posts, error: postError } = await supabase
     .from("post")
-    .select()
+    .select(
+      `
+      *,
+      profile:creator_user_id (
+        username,
+        avatar_url
+      ),
+      habit:habit_id (
+        picture_url
+      )
+    `
+    )
     .eq("creator_user_id", user_id);
-  if (error) {
-    throw new Error(`Error fetching posts: ${error.message}`);
+
+  if (postError) {
+    throw new Error(`Error fetching posts: ${postError.message}`);
   }
-  if (!data || data.length === 0) {
+  if (!posts || posts.length === 0) {
     return [];
   }
-  return data;
+
+  const postIds = posts.map((post) => post.post_id);
+
+  const { data: reactions, error: reactionError } = await supabase
+    .from("react_to")
+    .select(
+      `
+      reaction_type,
+      post_id,
+      profile:user_id (
+        avatar_url,
+        user_id,
+        username
+      )
+    `
+    )
+    .in("post_id", postIds);
+
+  if (reactionError) {
+    throw new Error(`Error fetching reactions: ${reactionError.message}`);
+  }
+
+  const postsWithReactions: Post[] = posts.map((post) => {
+    const postReactions = reactions
+      .filter((reaction) => reaction.post_id === post.post_id)
+      .map((reaction) => ({
+        reaction_type: reaction.reaction_type,
+        post_id: reaction.post_id,
+        ...reaction.profile,
+      }));
+    const newPost = {
+      ...post,
+      username: post.profile.username,
+      avatar_url: post.profile.avatar_url,
+      picture_url: post.habit.picture_url,
+      reactions: postReactions,
+    };
+    delete newPost.profile;
+    delete newPost.habit;
+    return newPost;
+  });
+
+  return postsWithReactions as Post[];
 };
 
-const getAllPosts = async (): Promise<PostTable[]> => {
+const getAllPosts = async (): Promise<Post[]> => {
   const supabase = createClient();
-  const { data, error } = await supabase.from("post").select();
-  if (error) {
-    throw new Error(`Error fetching posts: ${error.message}`);
+  const { data: posts, error: postError } = await supabase.from("post").select(`
+      *,
+      profile:creator_user_id (
+        username,
+        avatar_url
+      ),
+      habit:habit_id (
+        picture_url
+      )
+    `);
+
+  if (postError) {
+    throw new Error(`Error fetching posts: ${postError.message}`);
   }
-  if (!data || data.length === 0) {
+  if (!posts || posts.length === 0) {
     return [];
   }
-  return data;
+
+  const postIds = posts.map((post) => post.post_id);
+
+  const { data: reactions, error: reactionError } = await supabase
+    .from("react_to")
+    .select(
+      `
+      reaction_type,
+      post_id,
+      profile:user_id (
+        avatar_url,
+        user_id,
+        username
+      )
+    `
+    )
+    .in("post_id", postIds);
+
+  if (reactionError) {
+    throw new Error(`Error fetching reactions: ${reactionError.message}`);
+  }
+
+  const postsWithReactions: Post[] = posts.map((post) => {
+    const postReactions = reactions
+      .filter((reaction) => reaction.post_id === post.post_id)
+      .map((reaction) => ({
+        reaction_type: reaction.reaction_type,
+        post_id: reaction.post_id,
+        ...reaction.profile,
+      }));
+    const newPost = {
+      ...post,
+      username: post.profile.username,
+      avatar_url: post.profile.avatar_url,
+      picture_url: post.habit.picture_url,
+      reactions: postReactions,
+    };
+    delete newPost.profile;
+    delete newPost.habit;
+    return newPost;
+  });
+
+  return postsWithReactions as Post[];
+};
+
+const getFollowingUserPosts = async (user_id: string): Promise<Post[]> => {
+  const supabase = createClient();
+
+  // 获取关注的用户列表
+  const { data: followData, error: followError } = await supabase
+    .from("follow")
+    .select("following_id")
+    .eq("follower_id", user_id);
+
+  if (followError) {
+    throw new Error(`Error fetching following users: ${followError.message}`);
+  }
+
+  if (!followData || followData.length === 0) {
+    return [];
+  }
+
+  const followingUserIds = followData.map((follow) => follow.following_id);
+
+  // 获取所有关注用户的帖子
+  const allPosts: Post[] = [];
+  for (const followingUserId of followingUserIds) {
+    try {
+      const userPosts = await getMyPosts(followingUserId);
+      allPosts.push(...userPosts);
+    } catch (error) {
+      console.error(`Error fetching posts for user ${followingUserId}`);
+    }
+  }
+  return allPosts;
 };
 
 const createPost = async (
@@ -57,4 +195,10 @@ const deletePost = async (post_id: string): Promise<boolean> => {
   return true;
 };
 
-export { createPost, deletePost, getAllPosts, getMyPosts };
+export {
+  createPost,
+  deletePost,
+  getAllPosts,
+  getFollowingUserPosts,
+  getMyPosts,
+};
