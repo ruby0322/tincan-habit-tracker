@@ -1,6 +1,6 @@
 "use server";
 
-import { HabitTable, ProfileTable, PublicHabit, PublishTable } from "@/type";
+import { HabitTable, ProfileTable, PublicHabit } from "@/type";
 import { createClient } from "@/utils/supabase/server";
 
 const getPublicHabits = async (user_id: string): Promise<PublicHabit[]> => {
@@ -11,17 +11,19 @@ const getPublicHabits = async (user_id: string): Promise<PublicHabit[]> => {
     .from("publish")
     .select("habit_id");
 
-  if(publishError){
+  if (publishError) {
     console.log("Error fetching public habits", publishError);
     return [];
   }
 
-  if(!publishData || publishData.length === 0){
+  if (!publishData || publishData.length === 0) {
     console.log("No public habits found");
     return [];
   }
 
-  const habitsIds = publishData.map((publish: { habit_id: string }) => publish.habit_id);
+  const habitsIds = publishData.map(
+    (publish: { habit_id: string }) => publish.habit_id
+  );
   // console.log("habitsIds: ", habitsIds);
 
   // 2. 找到 public habits 各自的詳細資料
@@ -40,7 +42,7 @@ const getPublicHabits = async (user_id: string): Promise<PublicHabit[]> => {
     .from("publish")
     .select("habit_id, profile:user_id(user_id, username, avatar_url)");
 
-  if(profilesError){
+  if (profilesError) {
     console.log("Error fetching user profiles", profilesError);
     return [];
   }
@@ -51,7 +53,7 @@ const getPublicHabits = async (user_id: string): Promise<PublicHabit[]> => {
     .select("habit_id")
     .eq("habit_id", habitsIds);
 
-  if(userJoinedError) {
+  if (userJoinedError) {
     console.log("Error fetching user joined habits", userJoinedError);
     return [];
   }
@@ -68,13 +70,14 @@ const getPublicHabits = async (user_id: string): Promise<PublicHabit[]> => {
       }
       acc[profile.habit_id].push(profile.profile);
       return acc;
-    }, {}
+    },
+    {}
   );
-  
+
   const publicHabits: PublicHabit[] = (habits as HabitTable[]).map((habit) => ({
     ...habit,
     joined_users: profilesMap[habit.habit_id] || [],
-    has_joined: userJoinedHabitsIds.includes(habit.habit_id)
+    has_joined: userJoinedHabitsIds.includes(habit.habit_id),
   }));
 
   return publicHabits;
