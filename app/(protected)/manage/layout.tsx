@@ -36,20 +36,6 @@ export default async function ManageLayout({
           <h3 className='text-xs font-semibold'>已建立</h3>
           <span className='text-2xl font-bold'>{allHabits.length}</span>
         </Link>
-        <Link
-          href='/manage/completed'
-          className='flex flex-col gap-2 text-center'
-        >
-          <h3 className='text-xs font-semibold'>已完成</h3>
-          <span className='text-2xl font-bold'>4</span>
-        </Link>
-        <Link
-          href='/manage/in-progress'
-          className='flex flex-col gap-2 text-center'
-        >
-          <h3 className='text-xs font-semibold'>養成中</h3>
-          <span className='text-2xl font-bold'>2</span>
-        </Link>
       </div>
     </div>
   );

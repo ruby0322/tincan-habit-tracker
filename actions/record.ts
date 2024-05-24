@@ -6,20 +6,20 @@ import { revalidatePath } from "next/cache";
 const incrementCompletedUnit = async (habit_id: string): Promise<boolean> => {
   const supabase = createClient();
 
-  const today = new Date().toLocaleString('zh-Hans-TW', {
-    timeZone: 'Asia/Taipei',
-    year: 'numeric', 
-    month: 'numeric', 
-    day: 'numeric',
+  const today = new Date().toLocaleString("zh-Hans-TW", {
+    timeZone: "Asia/Taipei",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
   });
 
   const tomorrowDate = new Date(today);
-  tomorrowDate.setDate(tomorrowDate.getDate()+1)
-  const tomorrowString = tomorrowDate.toLocaleString('zh-Hans-TW', {
-    timeZone: 'Asia/Taipei',
-    year: 'numeric', 
-    month: 'numeric', 
-    day: 'numeric',
+  tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+  const tomorrowString = tomorrowDate.toLocaleString("zh-Hans-TW", {
+    timeZone: "Asia/Taipei",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
   });
 
   const { data: existingRecords, error: selectError } = await supabase
@@ -48,7 +48,7 @@ const incrementCompletedUnit = async (habit_id: string): Promise<boolean> => {
     const { error: updateError } = await supabase
       .from("record")
       .update({
-        num_completed_unit: Math.max(
+        num_completed_unit: Math.min(
           record.num_completed_unit + 1,
           habit[0].num_daily_goal_unit
         ),
@@ -79,21 +79,21 @@ const incrementCompletedUnit = async (habit_id: string): Promise<boolean> => {
 
 const decrementCompletedUnit = async (habit_id: string): Promise<boolean> => {
   const supabase = createClient();
-  
-  const today = new Date().toLocaleString('zh-Hans-TW', {
-    timeZone: 'Asia/Taipei',
-    year: 'numeric', 
-    month: 'numeric', 
-    day: 'numeric',
+
+  const today = new Date().toLocaleString("zh-Hans-TW", {
+    timeZone: "Asia/Taipei",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
   });
 
   const tomorrowDate = new Date(today);
-  tomorrowDate.setDate(tomorrowDate.getDate()+1)
-  const tomorrowString = tomorrowDate.toLocaleString('zh-Hans-TW', {
-    timeZone: 'Asia/Taipei',
-    year: 'numeric', 
-    month: 'numeric', 
-    day: 'numeric',
+  tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+  const tomorrowString = tomorrowDate.toLocaleString("zh-Hans-TW", {
+    timeZone: "Asia/Taipei",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
   });
 
   const { data: existingRecords, error: selectError } = await supabase
@@ -111,7 +111,7 @@ const decrementCompletedUnit = async (habit_id: string): Promise<boolean> => {
   if (existingRecords.length > 0) {
     // If the record exists
     const record = existingRecords[0];
-    const newCompletedUnit = record.num_completed_unit - 1;
+    const newCompletedUnit = Math.max(0, record.num_completed_unit - 1);
 
     if (newCompletedUnit > 0) {
       // If the decremented unit > 0, update the record
