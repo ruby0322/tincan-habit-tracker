@@ -9,7 +9,7 @@ import { incrementCompletedUnit, decrementCompletedUnit } from "@/actions/record
 
 
 export default async function Playground() {
-  let creator_user_id = "92a75107-0564-4dae-8be0-29665aaccf2b";
+  let creator_user_id = "11bc9c65-764e-4b41-9e24-4faed3cfe5ec";
   let date = new Date("2024-05-16");
   let habitId = "5e6989ed-e50e-4be7-b102-ead0edcd2656";
   let targetYear = 2024;
@@ -20,7 +20,7 @@ export default async function Playground() {
     const dailyHabits = await getDailyHabits(creator_user_id);
     console.log("-----這是分隔線-----", dailyHabits);
   };
-  // await fetchDailyHabits();
+  await fetchDailyHabits();
 
   const fetchLightHabits = async () => {
     const lightHabits = await getLightHabits(creator_user_id);
