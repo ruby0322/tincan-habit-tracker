@@ -9,9 +9,9 @@ import { incrementCompletedUnit, decrementCompletedUnit } from "@/actions/record
 
 
 export default async function Playground() {
-  let creator_user_id = "11bc9c65-764e-4b41-9e24-4faed3cfe5ec";
+  let creator_user_id = "92a75107-0564-4dae-8be0-29665aaccf2b";
   let date = new Date("2024-05-16");
-  let habitId = "7494f84a-595a-45fb-b451-65f9a1501791";
+  let habitId = "5e6989ed-e50e-4be7-b102-ead0edcd2656";
   let targetYear = 2024;
   let targetMonth = 5;
   let imageURL = "https://dmbkhireuarjpvecjmds.supabase.co/storage/v1/object/public/image/dalle-image-4519bd1f-98d6-4ce5-ae00-27265f7b3a0a";
@@ -39,13 +39,13 @@ export default async function Playground() {
           new Date("2022-03-25"),
           new Date("2024-05-23"),
           {
-            "Fri": false,
             "Mon": true,
+            "Tue": true,
+            "Wed": true,
+            "Thu": false,
+            "Fri": false,
             "Sat": true,
             "Sun": true,
-            "Thu": false,
-            "Tue": true,
-            "Wed": true
           },
         );
     };
@@ -114,11 +114,6 @@ export default async function Playground() {
   return (
     <div>
       <h1>去 CMoney 實習可以帶顧寬証嗎</h1>
-      {imageURL ? (
-        <Image src={imageURL} alt="Supabase Image" width={500} height={300} />
-      ) : (
-        <p>Image not found</p>
-      )}
     </div>
   );
 }

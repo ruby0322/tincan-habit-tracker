@@ -8,55 +8,59 @@ const getDailyHabits = async (
   creator_user_id: string
 ): Promise<DailyHabit[]> => {
   const weekDays: { [weekday: string]: string } = {
-    一: "Mon",
-    二: "Tue",
-    三: "Wed",
-    四: "Thu",
-    五: "Fri",
-    六: "Sat",
-    日: "Sun",
+    0: "Mon",
+    1: "Tue",
+    2: "Wed",
+    3: "Thu",
+    4: "Fri",
+    5: "Sat",
+    6: "Sun",
   };
   const supabase = createClient();
   const dayOfWeek = weekDays[new Date().getDay()];
 
   const { data: habits, error: habitsError } = await supabase
-    .from('habit')
-    .select('*')
-    .eq('creator_user_id', creator_user_id)
-    .filter(
-      `frequency->>${dayOfWeek}`,
-      'eq',
-      true
-    );
+    .from("habit")
+    .select("*")
+    .eq("creator_user_id", creator_user_id)
+    .filter(`frequency->>${dayOfWeek}`, "eq", true);
 
-  if(habitsError){
+  if (habitsError) {
     console.error("Error fetching daily habits", habitsError);
     return [];
   }
 
   if (!habits || habits.length === 0) {
+    console.log("No habits found");
     return [];
   }
 
-  const {data: records, error: recordsError} = await supabase
-    .from('record')
-    .select('habit_id, num_completed_unit')
-    .eq('creator_user_id', creator_user_id)
-  
+  const habitIds = habits.map((habit: HabitTable) => habit.habit_id);
+  // console.log(habitIds);
+  const today = new Date().toISOString().split("T")[0];
+  const { data: records, error: recordsError } = await supabase
+    .from("record")
+    .select("habit_id, num_completed_unit")
+    .in("habit_id", habitIds)
+    .gte("created_at", `${today}T00:00:00.000Z`)
+    .lte("created_at", `${today}T23:59:59.999Z`);
+
   if (recordsError) {
     console.error("Error fetching records", recordsError);
-    return habits.map(habit => ({
+    return habits.map((habit) => ({
       ...habit,
       num_completed_unit: 0,
     }));
   }
-  
-  const recordsMap: { [key: string]: number } = (records as RecordTable[]).reduce<{ [key: string]: number }>((acc, record) => {
+
+  const recordsMap: { [key: string]: number } = (
+    records as RecordTable[]
+  ).reduce<{ [key: string]: number }>((acc, record) => {
     acc[record.habit_id] = record.num_completed_unit;
     return acc;
   }, {});
 
-  const dailyHabits: DailyHabit[] = (habits as HabitTable[]).map(habit => ({
+  const dailyHabits: DailyHabit[] = (habits as HabitTable[]).map((habit) => ({
     ...habit,
     num_completed_unit: recordsMap[habit.habit_id] || 0,
   }));
@@ -64,7 +68,9 @@ const getDailyHabits = async (
   return dailyHabits;
 };
 
-const getLightHabits = async (creator_user_id: string): Promise<LightHabit[]> => {
+const getLightHabits = async (
+  creator_user_id: string
+): Promise<LightHabit[]> => {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("habit")
@@ -75,10 +81,10 @@ const getLightHabits = async (creator_user_id: string): Promise<LightHabit[]> =>
     console.error("Error fetching light habits", error);
     return [];
   }
-  
-  return data.map(habit => ({
+
+  return data.map((habit) => ({
     habit_id: habit.habit_id,
-    title: habit.title
+    title: habit.title,
   }));
 };
 
