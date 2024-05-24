@@ -20,7 +20,7 @@ export default async function Playground() {
     const dailyHabits = await getDailyHabits(creator_user_id);
     console.log("-----這是分隔線-----", dailyHabits);
   };
-  await fetchDailyHabits();
+  // await fetchDailyHabits();
 
   const fetchLightHabits = async () => {
     const lightHabits = await getLightHabits(creator_user_id);
@@ -67,7 +67,7 @@ export default async function Playground() {
         const publicHabits = await getPublicHabits(creator_user_id);
         console.log("Public Habits: ", publicHabits);
     }
-    // await fetchPublicHabit();
+    await fetchPublicHabit();
 
     const handlePublishHabit = async () => {
         const success = await publishHabit(habitId);
