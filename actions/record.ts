@@ -4,13 +4,29 @@ import { createClient } from "@/utils/supabase/server";
 
 const incrementCompletedUnit = async (habit_id: string): Promise<boolean> => {
   const supabase = createClient();
-  const today = new Date().toISOString().split("T")[0];
+
+  const today = new Date().toLocaleString('zh-Hans-TW', {
+    timeZone: 'Asia/Taipei',
+    year: 'numeric', 
+    month: 'numeric', 
+    day: 'numeric',
+  });
+
+  const tomorrowDate = new Date(today);
+  tomorrowDate.setDate(tomorrowDate.getDate()+1)
+  const tomorrowString = tomorrowDate.toLocaleString('zh-Hans-TW', {
+    timeZone: 'Asia/Taipei',
+    year: 'numeric', 
+    month: 'numeric', 
+    day: 'numeric',
+  });
+
   const { data: existingRecords, error: selectError } = await supabase
     .from("record")
     .select("*")
     .eq("habit_id", habit_id)
-    .gte("created_at", `${today}T00:00:00.000Z`)
-    .lte("created_at", `${today}T23:59:59.999Z`);
+    .gte("created_at", today)
+    .lte("created_at", tomorrowString);
 
   if (selectError) {
     console.error("Error fetching existing records", selectError);
@@ -37,6 +53,7 @@ const incrementCompletedUnit = async (habit_id: string): Promise<boolean> => {
     const { error: insertError } = await supabase.from("record").insert({
       habit_id,
       num_completed_unit: 1,
+      created_at: today,
     });
 
     if (insertError) {
@@ -50,15 +67,29 @@ const incrementCompletedUnit = async (habit_id: string): Promise<boolean> => {
 
 const decrementCompletedUnit = async (habit_id: string): Promise<boolean> => {
   const supabase = createClient();
+  
+  const today = new Date().toLocaleString('zh-Hans-TW', {
+    timeZone: 'Asia/Taipei',
+    year: 'numeric', 
+    month: 'numeric', 
+    day: 'numeric',
+  });
 
-  const today = new Date().toISOString().split("T")[0];
+  const tomorrowDate = new Date(today);
+  tomorrowDate.setDate(tomorrowDate.getDate()+1)
+  const tomorrowString = tomorrowDate.toLocaleString('zh-Hans-TW', {
+    timeZone: 'Asia/Taipei',
+    year: 'numeric', 
+    month: 'numeric', 
+    day: 'numeric',
+  });
 
   const { data: existingRecords, error: selectError } = await supabase
     .from("record")
     .select("*")
     .eq("habit_id", habit_id)
-    .gte("created_at", `${today}T00:00:00.000Z`)
-    .lte("created_at", `${today}T23:59:59.999Z`);
+    .gte("created_at", today)
+    .lte("created_at", tomorrowString);
 
   if (selectError) {
     console.error("Error checking existing records:", selectError);

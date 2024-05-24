@@ -18,7 +18,7 @@ const FollowingUserPosts = async ({ userId }: { userId: string }) => {
 
 const PopularPosts = async ({ userId }: { userId: string }) => {
   const followingUserPosts = await getAllPosts();
-  console.log(followingUserPosts);
+  // console.log(followingUserPosts);
   return (
     <>
       {followingUserPosts.map((post, index) => {
