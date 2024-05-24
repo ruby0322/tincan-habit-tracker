@@ -9,9 +9,9 @@ import { incrementCompletedUnit, decrementCompletedUnit } from "@/actions/record
 
 
 export default async function Playground() {
-  let creator_user_id = "11bc9c65-764e-4b41-9e24-4faed3cfe5ec";
+  let creator_user_id = "92a75107-0564-4dae-8be0-29665aaccf2b";
   let date = new Date("2024-05-16");
-  let habitId = "90a3b25c-0fa3-4d24-9783-2be4ccace34c";
+  let habitId = "5e6989ed-e50e-4be7-b102-ead0edcd2656";
   let targetYear = 2024;
   let targetMonth = 5;
   let imageURL = "https://dmbkhireuarjpvecjmds.supabase.co/storage/v1/object/public/image/dalle-image-4519bd1f-98d6-4ce5-ae00-27265f7b3a0a";
