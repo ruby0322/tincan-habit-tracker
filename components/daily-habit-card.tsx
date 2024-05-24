@@ -8,13 +8,29 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { DailyHabit } from "@/type";
 import Image from "next/image";
+import { useState } from "react";
 
 const DailyHabitCard = ({ dailyHabit }: { dailyHabit: DailyHabit }) => {
+  const [numCompletedUnit, setNumCompletedUnit] = useState<number>(
+    dailyHabit.num_completed_unit
+  );
   const onAddClick = async () => {
+    setNumCompletedUnit((prev) => {
+      if (prev < dailyHabit.num_daily_goal_unit) {
+        return prev + 1;
+      }
+      return prev;
+    });
     await incrementCompletedUnit(dailyHabit.habit_id);
   };
 
   const onMinusClick = async () => {
+    setNumCompletedUnit((prev) => {
+      if (prev > 0) {
+        return prev - 1;
+      }
+      return 0;
+    });
     await decrementCompletedUnit(dailyHabit.habit_id);
   };
   return (
@@ -24,16 +40,14 @@ const DailyHabitCard = ({ dailyHabit }: { dailyHabit: DailyHabit }) => {
       </h2>
       <Image
         alt={`Picture of ${dailyHabit.title}`}
-        className='w-24 h-24 rounded-lg'
+        className='w-24 h-24 rounded-lg rounded-b-none'
         width='1024'
         height='1024'
         src={dailyHabit.picture_url}
       />
       <Progress
-        className='h-4 rounded'
-        value={
-          (dailyHabit.num_completed_unit / dailyHabit.num_daily_goal_unit) * 100
-        }
+        className='w-24 h-2 rounded rounded-t-none mb-2'
+        value={(numCompletedUnit / dailyHabit.num_daily_goal_unit) * 100}
       />
       <div className='flex items-center w-full justify-between'>
         <Button
@@ -45,7 +59,7 @@ const DailyHabitCard = ({ dailyHabit }: { dailyHabit: DailyHabit }) => {
         </Button>
         <div className='flex flex-col items-center justify-center'>
           <p className='w-full text-center text-sm'>
-            {dailyHabit.num_completed_unit} / {dailyHabit.num_daily_goal_unit}
+            {numCompletedUnit} / {dailyHabit.num_daily_goal_unit}
           </p>
           <p className='w-full text-center text-xs'>
             ({dailyHabit.daily_goal_unit})

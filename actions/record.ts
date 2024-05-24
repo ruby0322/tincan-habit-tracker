@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
 
 const incrementCompletedUnit = async (habit_id: string): Promise<boolean> => {
   const supabase = createClient();
@@ -20,10 +21,21 @@ const incrementCompletedUnit = async (habit_id: string): Promise<boolean> => {
   // If record exist
   if (existingRecords.length > 0) {
     const record = existingRecords[0];
+    const { data: habit } = await supabase
+      .from("habit")
+      .select("num_daily_goal_unit")
+      .eq("habit_id", record.habit_id);
+    if (!habit || habit.length === 0) {
+      console.error("Error updating record, habit does not exist.");
+      return false;
+    }
     const { error: updateError } = await supabase
       .from("record")
       .update({
-        num_completed_unit: record.num_completed_unit + 1,
+        num_completed_unit: Math.max(
+          record.num_completed_unit + 1,
+          habit[0].num_daily_goal_unit
+        ),
       })
       .eq("record_id", record.record_id);
 
@@ -44,7 +56,7 @@ const incrementCompletedUnit = async (habit_id: string): Promise<boolean> => {
       return false;
     }
   }
-
+  revalidatePath("/manage");
   return true;
 };
 
@@ -94,7 +106,7 @@ const decrementCompletedUnit = async (habit_id: string): Promise<boolean> => {
       }
     }
   }
-
+  revalidatePath("/manage");
   return true;
 };
 
