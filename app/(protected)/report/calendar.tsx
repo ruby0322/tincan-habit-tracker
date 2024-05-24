@@ -9,6 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import { CalendarBar } from "./calendar-bar";
 import { color } from "framer-motion";
+import { getMonthlyReport } from "@/actions/report";
 
 function getDaysInMonth(month: number, year: number) {
   var date = new Date(year, month, 1);
@@ -52,17 +53,46 @@ function generateCalendar(month: number, year: number): number[][] {
   return daysList;
 }
 
+function createDate(year: number, month: number, day: number): Date {
+  const date = new Date(year, month - 1, day);
+  return date;
+}
+
+const generateDaysInMonth = (year: number, month: number): Date[] => {
+  const daysInMonth: Date[] = [];
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month, 0).getDate();
+  
+  for (let i = 1; i <= lastDay; i++) {
+    daysInMonth.push(new Date(year, month-1, i));
+  }
+  
+  return daysInMonth;
+};
+
+const getDayName = (dayOfWeek: number): string => {
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  return dayNames[dayOfWeek];
+};
+
+type Frequency = {
+  [key: string]: boolean;
+};
+
 const Calendar = ({ habit_id }: { habit_id: string }) => {
   const weekDays = ["S", "M", "T", "W", "T", "F", "S"];
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
   const [daysList, setDaysList] = useState(generateCalendar(month, year));
   const [progress, setProgress] = useState(0);
+  const [monthlyReport, setMonthlyReport] = useState<{ [date: string]: number }>({});
+  const [numDailyGoalUnit, setnumDailyGoalUnit] = useState<number>(0);
+  const [totalNumDailyGoalUnit, settotalNumDailyGoalUnit] = useState<number>(0);
 
   useEffect(() => {
     const timer = setTimeout(() => setProgress(66), 300);
     return () => clearTimeout(timer);
-  }, []);
+  }, [habit_id]);
   // 這是炫砲進度條，但他現在怪怪的，之後有空再修
   //   React.useEffect(() => {
   //     const timer = setInterval(() => {
@@ -76,7 +106,34 @@ const Calendar = ({ habit_id }: { habit_id: string }) => {
 
   useEffect(() => {
     setDaysList(generateCalendar(month, year));
-  }, [month, year]);
+    const daysInMonth = generateDaysInMonth(year, month+1);
+    let habitDaysCount = 0;
+    async function getMonthlyReport1(){
+      console.log(habit_id, year, month);
+      const monthlyReport = await getMonthlyReport(habit_id, year, month+1);
+      setnumDailyGoalUnit(monthlyReport.num_daily_goal_unit);
+      console.log(monthlyReport.records);
+      setMonthlyReport(monthlyReport.records);
+
+      // count habitDaysCount
+      const freq = monthlyReport.frequency as Frequency;
+      // console.log(daysInMonth);
+      daysInMonth.map(day => {
+        const dateString = day.toISOString().split('T')[0];
+        const dayOfWeek = day.getDay(); // 0 (Sun) to 6 (Sat)
+        // console.log(day, dateString, dayOfWeek);
+        if (freq[getDayName(dayOfWeek)] === true) {
+          // console.log(day);
+          habitDaysCount++;
+        }
+      });
+      settotalNumDailyGoalUnit(habitDaysCount);
+      console.log(habitDaysCount);
+    }
+    if(habit_id){
+      getMonthlyReport1();
+    }
+  }, [month, year, habit_id]);
 
   return (
     <div className='w-[400px]'>
@@ -110,11 +167,46 @@ const Calendar = ({ habit_id }: { habit_id: string }) => {
           {daysList.map((week, weekIndex) => (
             <div key={weekIndex} className='px-2 pt-2'>
               <div className='flex h-full items-center justify-between'>
-                {week.map((day, dayIndex) => (
-                  <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full bg-red-300'>
-                    {day !== 0 ? day : ""}
-                  </div>
-                ))}
+              {week.map((day, dayIndex) => {
+                const dateKey = createDate(year, month + 1, day).toISOString().split('T')[0];
+                if (monthlyReport[dateKey] === undefined) {
+                  return (
+                    <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full'>
+                      {day !== 0 ? day : ""}
+                    </div>
+                  );
+                } else if (monthlyReport[dateKey]/numDailyGoalUnit <= 0.2) {
+                  return (
+                    <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full bg-red-100'>
+                      {day !== 0 ? day : ""}
+                    </div>
+                  )
+                } else if (monthlyReport[dateKey]/numDailyGoalUnit <= 0.4) {
+                  return (
+                    <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full bg-red-200'>
+                      {day !== 0 ? day : ""}
+                    </div>
+                  )
+                } else if (monthlyReport[dateKey]/numDailyGoalUnit <= 0.6) {
+                  return (
+                    <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full bg-red-300'>
+                      {day !== 0 ? day : ""}
+                    </div>
+                  )
+                } else if (monthlyReport[dateKey]/numDailyGoalUnit <= 0.8) {
+                  return (
+                    <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full bg-red-400'>
+                      {day !== 0 ? day : ""}
+                    </div>
+                  )
+                } else if (monthlyReport[dateKey] === numDailyGoalUnit) {
+                  return (
+                    <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full bg-red-500'>
+                      {day !== 0 ? day : ""}
+                    </div>
+                  );
+                }
+              })}
               </div>
             </div>
           ))}
