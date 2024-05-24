@@ -1,83 +1,83 @@
 "use server";
 
-import { HabitTable, ProfileTable, PublicHabit } from "@/type";
+import { HabitTable, ProfileTable, PublicHabit, JoinTable } from "@/type";
 import { createClient } from "@/utils/supabase/server";
 
 const getPublicHabits = async (user_id: string): Promise<PublicHabit[]> => {
   const supabase = createClient();
 
-  // 1. 先找到所有 public habits
-  const { data: publishData, error: publishError } = await supabase
-    .from("publish")
-    .select("habit_id");
+  // 1. Fetch all public habits
+  const { data: habitsData, error: habitsError } = await supabase
+    .from("habit")
+    .select("*")
+    .eq("is_public", true);
 
-  if (publishError) {
-    console.log("Error fetching public habits", publishError);
+  if (habitsError) {
+    console.error("Error fetching public habits", habitsError);
     return [];
   }
 
-  if (!publishData || publishData.length === 0) {
+  if (!habitsData || habitsData.length === 0) {
     console.log("No public habits found");
     return [];
   }
 
-  const habitsIds = publishData.map(
-    (publish: { habit_id: string }) => publish.habit_id
-  );
-  // console.log("habitsIds: ", habitsIds);
+  const habitIds = habitsData.map((habit: HabitTable) => habit.habit_id);
 
-  // 2. 找到 public habits 各自的詳細資料
-  const { data: habits, error: habitsError } = await supabase
-    .from("habit")
-    .select("*")
-    .in("habit_id", habitsIds);
+  // 2. Fetch profiles of users who joined each public habit
+  const { data: joinedData, error: joinedError } = await supabase
+    .from("join")
+    .select("habit_id, user_id")
+    .in("habit_id", habitIds);
 
-  if (habitsError) {
-    console.error("Error fetching habit details", habitsError);
+  if (joinedError) {
+    console.error("Error fetching joined users", joinedError);
     return [];
   }
 
-  // 3. 每個 public habits 的每個參加者的詳細資料
+  const userIds = joinedData.map((join: JoinTable) => join.user_id);
+
+  // Fetch profile details for the joined users
   const { data: profilesData, error: profilesError } = await supabase
-    .from("publish")
-    .select("habit_id, profile:user_id(user_id, username, avatar_url)");
+    .from("profile")
+    .select("user_id, username, avatar_url")
+    .in("user_id", userIds);
 
   if (profilesError) {
-    console.log("Error fetching user profiles", profilesError);
+    console.error("Error fetching user profiles", profilesError);
     return [];
   }
 
-  // 4. 找到該使用者有參加的 public habits
-  const { data: userJoinedHabits, error: userJoinedError } = await supabase
-    .from("habit")
+  // Create a map of habit_id to joined users' profiles
+  const profilesMap: { [key: string]: ProfileTable[] } = joinedData.reduce((acc: { [key: string]: ProfileTable[] }, join) => {
+    if (!acc[join.habit_id]) {
+      acc[join.habit_id] = [];
+    }
+    const userProfile = profilesData.find((profile: ProfileTable) => profile.user_id === join.user_id);
+    if (userProfile) {
+      acc[join.habit_id].push(userProfile);
+    }
+    return acc;
+  }, {});
+
+  // 3. Check if the current user has joined each public habit
+  const { data: userJoinedData, error: userJoinedError } = await supabase
+    .from("join")
     .select("habit_id")
-    .eq("habit_id", habitsIds);
+    .eq("user_id", user_id);
 
   if (userJoinedError) {
-    console.log("Error fetching user joined habits", userJoinedError);
+    console.error("Error fetching user's joined habits", userJoinedError);
     return [];
   }
 
-  const userJoinedHabitsIds = userJoinedHabits.map(
-    (publish: { habit_id: string }) => publish.habit_id
-  );
+  const userJoinedHabitIds = userJoinedData.map((join: JoinTable) => join.habit_id);
 
-  // 5. 找到每個參與者的 profile 詳細資料
-  const profilesMap: { [key: string]: ProfileTable[] } = profilesData.reduce(
-    (acc: { [key: string]: ProfileTable[] }, profile: any) => {
-      if (!acc[profile.habit_id]) {
-        acc[profile.habit_id] = [];
-      }
-      acc[profile.habit_id].push(profile.profile);
-      return acc;
-    },
-    {}
-  );
-
-  const publicHabits: PublicHabit[] = (habits as HabitTable[]).map((habit) => ({
+  // 4. Combine data to create the final public habits result
+  const publicHabits: PublicHabit[] = habitsData.map((habit: HabitTable) => ({
     ...habit,
     joined_users: profilesMap[habit.habit_id] || [],
-    has_joined: userJoinedHabitsIds.includes(habit.habit_id),
+    has_joined: userJoinedHabitIds.includes(habit.habit_id)
   }));
 
   return publicHabits;
@@ -85,23 +85,14 @@ const getPublicHabits = async (user_id: string): Promise<PublicHabit[]> => {
 
 const publishHabit = async (habit_id: string): Promise<boolean> => {
   const supabase = createClient();
-  const { data: habitData, error: fetchError } = await supabase
+
+  const { error: updateError } = await supabase
     .from("habit")
-    .select("creator_user_id")
-    .eq("habit_id", habit_id)
-    .single();
+    .update({ is_public: true })
+    .eq("habit_id", habit_id);
 
-  if (fetchError) {
-    console.error("Error fetching habit", fetchError);
-    return false;
-  }
-
-  const { error: insertError } = await supabase.from("publish").insert({
-    habit_id,
-  });
-
-  if (insertError) {
-    console.error("Error publishing habit:", insertError);
+  if (updateError) {
+    console.error("Error publishing habit:", updateError);
     return false;
   }
 
@@ -110,13 +101,14 @@ const publishHabit = async (habit_id: string): Promise<boolean> => {
 
 const unpublishHabit = async (habit_id: string): Promise<boolean> => {
   const supabase = createClient();
-  const { error } = await supabase
-    .from("publish")
-    .delete()
+
+  const { error: updateError } = await supabase
+    .from("habit")
+    .update({ is_public: false })
     .eq("habit_id", habit_id);
 
-  if (error) {
-    console.error("Error unpublishing habit", error);
+  if (updateError) {
+    console.error("Error unpublishing habit", updateError);
     return false;
   }
 
@@ -129,23 +121,8 @@ const joinHabit = async (
 ): Promise<boolean> => {
   const supabase = createClient();
   const { data: habitData, error: fetchError } = await supabase
-    .from("publish")
-    .select(
-      `
-            habit_id,
-            habit: habit_id(
-                creator_user_id,
-                title,
-                picture_url,
-                message,
-                num_daily_goal_unit,
-                daily_goal_unit,
-                start_date,
-                end_date,
-                frequency
-            )
-        `
-    )
+    .from("habit")
+    .select("*")
     .eq("habit_id", habit_id)
     .single();
 
@@ -154,12 +131,17 @@ const joinHabit = async (
     return false;
   }
 
-  const { habit } = habitData;
-
-  const { error: insertError } = await supabase.from("habit").insert({
-    ...habit,
-    creator_user_id: user_id,
-    created_at: new Date().toISOString(),
+  console.log(habit_id);
+  
+  if (!habitData || !habitData.is_public) {
+    console.error("Habit is not public or does not exist");
+    return false;
+  }
+  
+  const { error: insertError } = await supabase.from("join").insert({
+    user_id,
+    habit_id: habitData.habit_id,
+    habit_instance_id: habitData.habit_id, 
   });
 
   if (insertError) {

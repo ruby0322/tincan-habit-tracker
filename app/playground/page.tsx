@@ -67,7 +67,7 @@ export default async function Playground() {
         const publicHabits = await getPublicHabits(creator_user_id);
         console.log("Public Habits: ", publicHabits);
     }
-    await fetchPublicHabit();
+    // await fetchPublicHabit();
 
     const handlePublishHabit = async () => {
         const success = await publishHabit(habitId);
