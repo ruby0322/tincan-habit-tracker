@@ -217,23 +217,29 @@ const Calendar = ({ habit_id }: { habit_id: string }) => {
                   );
                 } else if (monthlyReport[dateKey]/numDailyGoalUnit <= 0.2) {
                   return (
-                    <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full bg-red-100'>
+                    <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full bg-red-50'>
                       {day !== 0 ? day : ""}
                     </div>
                   )
                 } else if (monthlyReport[dateKey]/numDailyGoalUnit <= 0.4) {
                   return (
-                    <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full bg-red-200'>
+                    <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full bg-red-100'>
                       {day !== 0 ? day : ""}
                     </div>
                   )
                 } else if (monthlyReport[dateKey]/numDailyGoalUnit <= 0.6) {
                   return (
-                    <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full bg-red-300'>
+                    <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full bg-red-200'>
                       {day !== 0 ? day : ""}
                     </div>
                   )
                 } else if (monthlyReport[dateKey]/numDailyGoalUnit <= 0.8) {
+                  return (
+                    <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full bg-red-300'>
+                      {day !== 0 ? day : ""}
+                    </div>
+                  )
+                } else if (monthlyReport[dateKey]/numDailyGoalUnit < 1) {
                   return (
                     <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full bg-red-400'>
                       {day !== 0 ? day : ""}
@@ -242,6 +248,12 @@ const Calendar = ({ habit_id }: { habit_id: string }) => {
                 } else if (monthlyReport[dateKey] === numDailyGoalUnit) {
                   return (
                     <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full bg-red-500'>
+                      {day !== 0 ? day : ""}
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div key={dayIndex} className='text-center w-8 h-8 pt-1 rounded-full'>
                       {day !== 0 ? day : ""}
                     </div>
                   );
