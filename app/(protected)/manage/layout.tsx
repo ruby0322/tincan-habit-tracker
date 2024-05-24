@@ -22,7 +22,9 @@ export default async function ManageLayout({
     <div className='bg-gray-100 flex h-full gap-4 flex-col mx-auto px-4 py-4 md:px-6 md:py-6'>
       <MessageWidget dailyHabits={dailyHabits} />
       <Carousel>
-        <CarouselContent className='h-full'>{children}</CarouselContent>
+        <CarouselContent className='h-full overflow-visible'>
+          {children}
+        </CarouselContent>
       </Carousel>
       <div className='w-full justify-between  bg-white rounded-lg shadow-sm py-4 px-12 flex gap-6'>
         <Link href='/manage' className='flex flex-col gap-2 text-center'>
