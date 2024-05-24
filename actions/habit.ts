@@ -4,18 +4,18 @@ import { DailyHabit, HabitTable, LightHabit, RecordTable } from "@/type";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
-const WEEK_DAYS: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const WEEK_DAYS: string[] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const getDailyHabits = async (
   creator_user_id: string
 ): Promise<DailyHabit[]> => {
   const weekDays: { [weekday: string]: string } = {
-    0: "Mon",
-    1: "Tue",
-    2: "Wed",
-    3: "Thu",
-    4: "Fri",
-    5: "Sat",
-    6: "Sun",
+    0: "Sun",
+    1: "Mon",
+    2: "Tue",
+    3: "Wed",
+    4: "Thu",
+    5: "Fri",
+    6: "Sat",
   };
 
   const supabase = createClient();
@@ -48,8 +48,8 @@ const getDailyHabits = async (
     .from("record")
     .select("habit_id, num_completed_unit")
     .in("habit_id", habitIds)
-    .gte("created_at", `${today}T00:00:00.000+08:00`)
-    .lte("created_at", `${today}T23:59:59.999+08:00`);
+    .gte("created_at", `${today}T00:00:00.000`)
+    .lte("created_at", `${today}T23:59:59.999`);
 
   if (recordsError) {
     console.error("Error fetching records", recordsError);
