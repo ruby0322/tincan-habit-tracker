@@ -27,8 +27,8 @@ const getPublicHabits = async (user_id: string): Promise<PublicHabit[]> => {
   // 2. Fetch profiles of users who joined each public habit
   const { data: joinedData, error: joinedError } = await supabase
     .from("join")
-    .select("habit_id, user_id")
-    .in("habit_id", habitIds);
+    .select("habit_instance_id, user_id")
+    .in("habit_instance_id", habitIds);
 
   if (joinedError) {
     console.error("Error fetching joined users", joinedError);
@@ -50,12 +50,12 @@ const getPublicHabits = async (user_id: string): Promise<PublicHabit[]> => {
 
   // Create a map of habit_id to joined users' profiles
   const profilesMap: { [key: string]: ProfileTable[] } = joinedData.reduce((acc: { [key: string]: ProfileTable[] }, join) => {
-    if (!acc[join.habit_id]) {
-      acc[join.habit_id] = [];
+    if (!acc[join.habit_instance_id]) {
+      acc[join.habit_instance_id] = [];
     }
     const userProfile = profilesData.find((profile: ProfileTable) => profile.user_id === join.user_id);
     if (userProfile) {
-      acc[join.habit_id].push(userProfile);
+      acc[join.habit_instance_id].push(userProfile);
     }
     return acc;
   }, {});
@@ -63,7 +63,7 @@ const getPublicHabits = async (user_id: string): Promise<PublicHabit[]> => {
   // 3. Check if the current user has joined each public habit
   const { data: userJoinedData, error: userJoinedError } = await supabase
     .from("join")
-    .select("habit_id")
+    .select("habit_instance_id")
     .eq("user_id", user_id);
 
   if (userJoinedError) {
@@ -71,7 +71,7 @@ const getPublicHabits = async (user_id: string): Promise<PublicHabit[]> => {
     return [];
   }
 
-  const userJoinedHabitIds = userJoinedData.map((join: JoinTable) => join.habit_id);
+  const userJoinedHabitIds = userJoinedData.map((join: JoinTable) => join.habit_instance_id);
 
   // 4. Combine data to create the final public habits result
   const publicHabits: PublicHabit[] = habitsData.map((habit: HabitTable) => ({
