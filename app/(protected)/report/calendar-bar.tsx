@@ -39,10 +39,10 @@ const CalendarBar: React.FC<CalendarBarProps> = ({ onMonthChange, onYearChange }
     }, [year, onYearChange]);
 
     return (
-        <div className="flex justify-between">
-            <Button onClick={lastMonth} className="mx-12">{"<"}</Button>
+        <div className="flex justify-center">
+            <Button onClick={lastMonth} className="mr-12">{"<"}</Button>
             <Button variant="secondary" size="lg" className="px-16">{year.toString() + '.' + (month+1).toString()}</Button>
-            <Button onClick={nextMonth} className="mx-12">{">"}</Button>
+            <Button onClick={nextMonth} className="ml-12">{">"}</Button>
         </div>
     )
 }
