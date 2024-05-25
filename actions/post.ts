@@ -1,7 +1,9 @@
 "use server";
 
-import { Post } from "@/type";
+import { DailyHabit, Post } from "@/type";
 import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
+import { generateDailyHabitPostContent } from "./generation";
 
 const getMyPosts = async (user_id: string): Promise<Post[]> => {
   const supabase = createClient();
@@ -168,21 +170,18 @@ const getFollowingUserPosts = async (user_id: string): Promise<Post[]> => {
   return allPosts;
 };
 
-const createPost = async (
-  creator_user_id: string,
-  habit_id: string,
-  content: string
-): Promise<boolean> => {
+const createPost = async (dailyHabit: DailyHabit): Promise<boolean> => {
   const supabase = createClient();
   const { error } = await supabase.from("post").insert({
-    creator_user_id: creator_user_id,
-    habit_id: habit_id,
+    creator_user_id: dailyHabit.creator_user_id,
+    habit_id: dailyHabit.habit_id,
     created_at: new Date(),
-    content: content,
+    content: await generateDailyHabitPostContent(dailyHabit),
   });
   if (error) {
     throw new Error(`Error creating post: ${error.message}`);
   }
+  revalidatePath("/social");
   return true;
 };
 

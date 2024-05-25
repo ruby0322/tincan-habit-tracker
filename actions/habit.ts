@@ -4,32 +4,27 @@ import { DailyHabit, HabitTable, LightHabit, RecordTable } from "@/type";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
-const WEEK_DAYS: string[] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const WEEK_DAYS: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const getDailyHabits = async (
   creator_user_id: string
 ): Promise<DailyHabit[]> => {
   const weekDays: { [weekday: string]: string } = {
-    0: "Sun",
-    1: "Mon",
-    2: "Tue",
-    3: "Wed",
-    4: "Thu",
-    5: "Fri",
-    6: "Sat",
+    0: "Mon",
+    1: "Tue",
+    2: "Wed",
+    3: "Thu",
+    4: "Fri",
+    5: "Sat",
+    6: "Sun",
   };
-
   const supabase = createClient();
   const dayOfWeek = WEEK_DAYS[new Date().getDay()];
-
-  const today = new Date().toISOString().split("T")[0];
 
   const { data: habits, error: habitsError } = await supabase
     .from("habit")
     .select("*")
     .eq("creator_user_id", creator_user_id)
-    .filter(`frequency->>${dayOfWeek}`, "eq", true)
-    .lte("start_date", today)
-    .gte("end_date", today);
+    .filter(`frequency->>${dayOfWeek}`, "eq", true);
 
   if (habitsError) {
     console.error("Error fetching daily habits", habitsError);
@@ -38,18 +33,18 @@ const getDailyHabits = async (
 
   if (!habits || habits.length === 0) {
     console.log("No habits found");
-    console.log(creator_user_id);
     return [];
   }
 
   const habitIds = habits.map((habit: HabitTable) => habit.habit_id);
   // console.log(habitIds);
+  const today = new Date().toISOString().split("T")[0];
   const { data: records, error: recordsError } = await supabase
     .from("record")
     .select("habit_id, num_completed_unit")
     .in("habit_id", habitIds)
-    .gte("created_at", `${today}T00:00:00.000`)
-    .lte("created_at", `${today}T23:59:59.999`);
+    .gte("created_at", `${today}T00:00:00.000Z`)
+    .lte("created_at", `${today}T23:59:59.999Z`);
 
   if (recordsError) {
     console.error("Error fetching records", recordsError);
@@ -139,7 +134,7 @@ const deleteHabit = async (habit_id: string): Promise<boolean> => {
     console.error("Error deleting habit", error);
     return false;
   }
-
+  revalidatePath("/manage");
   return true;
 };
 

@@ -1,4 +1,6 @@
 "use client";
+import { deleteHabit } from "@/actions/habit";
+import { createPost } from "@/actions/post";
 import {
   decrementCompletedUnit,
   incrementCompletedUnit,
@@ -7,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { DailyHabit } from "@/type";
 import { AreaChart, Minus, Plus, SquarePen, Trash2 } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { MouseEventHandler, useState } from "react";
 import ReactCardFlip from "react-card-flip";
 import ConfirmDialog from "./confirm-dialog";
@@ -93,7 +96,18 @@ const CardBack = ({
   dailyHabit: DailyHabit;
   flip: () => void;
 }) => {
-  const onPostClick = async () => {};
+  const router = useRouter();
+  const onPostConfirm = async () => {
+    await createPost(dailyHabit);
+    router.push("/social");
+  };
+  const onDeleteConfirm = async () => {
+    await deleteHabit(dailyHabit.habit_id);
+  };
+  const onReportClick = async (e: MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/report/${dailyHabit.creator_user_id}`);
+  };
   return (
     <div
       onClick={flip}
@@ -101,23 +115,31 @@ const CardBack = ({
     >
       <ConfirmDialog
         text={`你確定要發布 ${dailyHabit.title} 的今日進度貼文嗎？`}
-        onConfirm={function (): Promise<void> {
-          throw new Error("Function not implemented.");
-        }}
+        onConfirm={onPostConfirm}
       >
         <Button variant='outline'>
           <SquarePen className='text-gray-400 mr-2 h-4 w-4' />
           發文
         </Button>
       </ConfirmDialog>
-      <Button variant='outline'>
+      <Button
+        onClick={
+          onReportClick as unknown as MouseEventHandler<HTMLButtonElement>
+        }
+        variant='outline'
+      >
         <AreaChart className='text-gray-400 mr-2 h-4 w-4' />
         報告
       </Button>
-      <Button variant='destructive'>
-        <Trash2 className='text-white mr-2 h-4 w-4' />
-        刪除
-      </Button>
+      <ConfirmDialog
+        text={`你確定要永久刪除 ${dailyHabit.title} 習慣嗎？`}
+        onConfirm={onDeleteConfirm}
+      >
+        <Button variant='destructive'>
+          <Trash2 className='text-white mr-2 h-4 w-4' />
+          刪除
+        </Button>
+      </ConfirmDialog>
     </div>
   );
 };
