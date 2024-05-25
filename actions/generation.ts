@@ -53,13 +53,13 @@ const generateDailyHabitPostContent = async (dailyHabit: DailyHabit) => {
   - 完成率：${progress}%
   - 目標單位：${dailyHabit.daily_goal_unit}`;
   let captionStyle;
-  if (0 <= progress && progress <= 25) {
+  if (0 <= progress && progress <= 20) {
     captionStyle = BAD_PROGRESS_PROMPT;
-  } else if (progress < 50) {
+  } else if (progress < 40) {
     captionStyle = NORMAL_PROGRESS_PROMPT;
-  } else if (progress < 75) {
+  } else if (progress < 60) {
     captionStyle = OK_PROGRESS_PROMPT;
-  } else if (progress < 90) {
+  } else if (progress < 80) {
     captionStyle = GOOD_PROGRESS_PROMPT;
   } else {
     captionStyle = PERFECT_PROGRESS_PROMPT;
