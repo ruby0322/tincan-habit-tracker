@@ -11,9 +11,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import Calendar from "./calendar";
 import { LightHabit } from "@/type";
+import Calendar from "./calendar";
 
+import { useParams, useRouter } from "next/navigation";
 // const lightHabits = [
 //   {
 //     habit_id: "idaaaaa",
@@ -37,9 +38,17 @@ import { LightHabit } from "@/type";
 //   },
 // ];
 
-const SelectHabit = ({ lightHabits }: { lightHabits: LightHabit[] }) => {
-  const [open, setOpen] = React.useState(false);
-  const [habitId, setHabitId] = React.useState("");
+const SelectHabit = ({
+  lightHabits,
+  selectedHabitId,
+}: {
+  lightHabits: LightHabit[];
+  selectedHabitId: string;
+}) => {
+  const params = useParams<{ habit_id: string }>();
+  const router = useRouter();
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [habitId, setHabitId] = React.useState<string>(params.habit_id);
   // habitId 存目前選擇哪個 habit 的 id，目前應該沒有總完成率這個選項，有空可以再加
 
   return (
@@ -71,8 +80,8 @@ const SelectHabit = ({ lightHabits }: { lightHabits: LightHabit[] }) => {
                     key={lightHabit.habit_id}
                     value={lightHabit.habit_id}
                     onSelect={(currentValue) => {
-                      // currentValue 就是目前選擇到的那個 habit_id
-                      setHabitId(currentValue === habitId ? "" : currentValue);
+                      router.push(`/report/${lightHabit.habit_id}`);
+                      setHabitId(currentValue);
                       setOpen(false);
                     }}
                   >
