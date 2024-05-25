@@ -1,8 +1,8 @@
 "use server";
 
-import SelectHabit from "./select-habit";
 import { getLightHabits } from "@/actions/habit";
 import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
 const ReportPage = async () => {
   const supabase = createClient();
@@ -10,11 +10,7 @@ const ReportPage = async () => {
     data: { user },
   } = await supabase.auth.getUser();
   const lightHabits = await getLightHabits(user?.id as string);
-  return (
-    <div className='p-4 flex justify-center align-center'>
-      <SelectHabit lightHabits={lightHabits}/>
-    </div>
-  );
+  return redirect(`/report/${lightHabits[0].habit_id}`);
 };
 
 export default ReportPage;
