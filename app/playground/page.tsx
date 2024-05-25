@@ -1,23 +1,20 @@
-"use server";
+'use server'
 
-import {
-  createHabit,
-  deleteHabit,
-  getAllHabits,
-  getDailyHabits,
-  getLightHabits,
-} from "@/actions/habit";
-import {
-  getPublicHabits,
-  joinHabit,
-  publishHabit,
-  unpublishHabit,
-} from "@/actions/public-habits";
+import React from 'react';
+import Image from 'next/image';
+import { getDailyHabits, getLightHabits, createHabit, deleteHabit, getAllHabits } from "@/actions/habit";
+import { getPublicHabits, publishHabit, unpublishHabit, joinHabit } from "@/actions/public-habits";
+import { getFullReport, getMonthlyReport } from "@/actions/report";
+import { incrementCompletedUnit, decrementCompletedUnit } from "@/actions/record";
+
 
 export default async function Playground() {
-  let creator_user_id = "92a75107-0564-4dae-8be0-29665aaccf2b";
-  let date = "2024-05-16";
-  let habitId = "1bc5c70b-5c5e-4a79-8954-184a12938b31";
+  let creator_user_id = "fafa45d2-9920-4d80-ad35-af748fed4b68";
+  let date = new Date("2024-05-16");
+  let habitId = "5e6989ed-e50e-4be7-b102-ead0edcd2656";
+  let targetYear = 2024;
+  let targetMonth = 5;
+  let imageURL = "https://dmbkhireuarjpvecjmds.supabase.co/storage/v1/object/public/image/dalle-image-4519bd1f-98d6-4ce5-ae00-27265f7b3a0a";
 
   const fetchDailyHabits = async () => {
     const dailyHabits = await getDailyHabits(creator_user_id);
@@ -31,69 +28,92 @@ export default async function Playground() {
   };
   // await fetchLightHabits();
 
-  const handleCreateHabit = async () => {
-    const success = await createHabit(
-      "92a75107-0564-4dae-8be0-29665aaccf2b",
-      "love",
-      "https://picsum.photos/200",
-      "AAAA",
-      69,
-      "12",
-      new Date("2022-03-25"),
-      new Date("2024-05-23"),
-      {
-        Fri: false,
-        Mon: true,
-        Sat: true,
-        Sun: true,
-        Thu: false,
-        Tue: true,
-        Wed: true,
-      }
-    );
-  };
-  // await handleCreateHabit();
+    const handleCreateHabit = async () => {
+        const success = await createHabit(
+          '92a75107-0564-4dae-8be0-29665aaccf2b',
+          'love',
+          'https://picsum.photos/200',
+          'AAAA',
+          69,
+          '12',
+          new Date("2022-03-25"),
+          new Date("2024-05-23"),
+          {
+            "Mon": true,
+            "Tue": true,
+            "Wed": true,
+            "Thu": false,
+            "Fri": false,
+            "Sat": true,
+            "Sun": true,
+          },
+        );
+    };
+    // await handleCreateHabit();
 
-  const handleDeleteHabit = async () => {
-    const success = await deleteHabit(habitId);
-    console.log("Successfully deleted!");
-  };
-  // await handleDeleteHabit();
+    const handleDeleteHabit = async () => {
+        const success = await deleteHabit(habitId);
+        console.log("Successfully deleted!")
+    };
+    // await handleDeleteHabit();
 
-  const fetchAllHabits = async () => {
-    const allHabits = await getAllHabits(creator_user_id);
-    console.log("All Habits: ", allHabits);
-  };
-  // await fetchAllHabits();
+    const fetchAllHabits = async () => {
+        const allHabits = await getAllHabits(creator_user_id);
+        console.log("All Habits: ", allHabits);
+    };
+    // await fetchAllHabits();
 
-  const fetchPublicHabit = async () => {
-    const publicHabits = await getPublicHabits(creator_user_id);
-    console.log("Public Habits: ", publicHabits);
-  };
-  // await fetchPublicHabit();
+    const fetchPublicHabit = async () => {
+        const publicHabits = await getPublicHabits(creator_user_id);
+        console.log("Public Habits: ", publicHabits);
+    }
+    // await fetchPublicHabit();
 
-  const handlePublishHabit = async () => {
-    const success = await publishHabit(habitId);
-    console.log("Successfully published!");
-  };
-  // await handlePublishHabit();
+    const handlePublishHabit = async () => {
+        const success = await publishHabit(habitId);
+        console.log("Successfully published!")
+    };
+    // await handlePublishHabit();
 
-  const handleUnpublishHabit = async () => {
-    const success = await unpublishHabit(habitId);
-    console.log("Successfully unpublished!");
-  };
-  // await handleUnpublishHabit();
+    const handleUnpublishHabit = async () => {
+        const success = await unpublishHabit(habitId);
+        console.log("Successfully unpublished!")
+    };
+    // await handleUnpublishHabit();
 
-  const handleJoinHabit = async () => {
-    const success = await joinHabit(creator_user_id, habitId);
-    console.log("Successfully joined!");
-  };
-  // await handleJoinHabit();
+    const handleJoinHabit = async () => {
+        const success = await joinHabit(creator_user_id, habitId);
+        console.log("Successfully joined!")
+    }
+    // await handleJoinHabit();
+
+    const fetchFullReport = async () => {
+        const report = await getFullReport(habitId);
+        console.log("Successfully retrieved report!", report)
+    };
+    // await fetchFullReport();
+
+    const fetchMonthlyReport = async () => {
+      const report = await getMonthlyReport(habitId, targetYear, targetMonth);
+      console.log("Successfully retrieved report!", report)
+    };
+    // await fetchMonthlyReport();
+
+    const handleIncrementCompletedUnit = async () => {
+        const success = await incrementCompletedUnit(habitId);
+        console.log("Successfully incremented!")
+    };
+    // await handleIncrementCompletedUnit();
+
+    const handleDecrementCompletedUnit = async () => {
+        const success = await decrementCompletedUnit(habitId);
+        console.log("Successfully decremented!")
+    };
+    // await handleDecrementCompletedUnit();
 
   return (
     <div>
       <h1>去 CMoney 實習可以帶顧寬証嗎</h1>
-      <div>Testing</div>
     </div>
   );
 }

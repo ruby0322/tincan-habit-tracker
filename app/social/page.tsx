@@ -18,7 +18,7 @@ const FollowingUserPosts = async ({ userId }: { userId: string }) => {
 
 const PopularPosts = async ({ userId }: { userId: string }) => {
   const followingUserPosts = await getAllPosts();
-  console.log(followingUserPosts);
+  // console.log(followingUserPosts);
   return (
     <>
       {followingUserPosts.map((post, index) => {
@@ -36,13 +36,18 @@ const SocialPage = async () => {
   } = await supabase.auth.getUser();
 
   return (
-    <Tabs defaultValue='friends' className='w-full p-4 border-0'>
+    <Tabs defaultValue='popular' className='w-full p-4 border-0'>
       <div className='w-full h-full'>
-        <TabsList className='grid w-full grid-cols-3'>
-          <TabsTrigger value='friends'>追蹤</TabsTrigger>
-          <TabsTrigger value='popular'>熱門</TabsTrigger>
-          <TabsTrigger value='community'>社群活動</TabsTrigger>
-        </TabsList>
+        <div className='flex w-full gap-4 items-center'>
+          <TabsList className='grid w-full grid-cols-3'>
+            <TabsTrigger value='popular'>熱門</TabsTrigger>
+            <TabsTrigger value='friends'>追蹤</TabsTrigger>
+            <TabsTrigger value='community'>社群活動</TabsTrigger>
+          </TabsList>
+          {/* <Button size='icon' variant='outline' className='self-end'>
+            <SquarePen className='w-12 text-gray-400 p-[2px]' />
+          </Button> */}
+        </div>
         <TabsContent className='overflow-y-scorll' value='friends'>
           <FollowingUserPosts userId={user?.id as string} />
         </TabsContent>

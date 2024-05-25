@@ -1,5 +1,7 @@
+import { redirect } from "next/navigation";
+
 const RootPage = () => {
-  return <>Home</>;
+  return redirect("/social");
 };
 
 export default RootPage;

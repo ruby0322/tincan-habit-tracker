@@ -3,9 +3,10 @@
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import UserAvatar from "./user-avatar";
 
 const Header = () => {
+  const [userId, setUserId] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   // Get current date and format it
@@ -37,6 +38,7 @@ const Header = () => {
       if (profiles && profiles.length > 0) {
         setUsername(profiles[0].username);
         setAvatarUrl(profiles[0].avatar_url);
+        setUserId(profiles[0].user_id);
       }
     };
     getUserProfile();
@@ -45,7 +47,7 @@ const Header = () => {
 
   return (
     <header className='sm:w-[28rem] w-full fixed sm:top-[2vh] top-0 shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] bg-white shadow-sm'>
-      <div className='h-[4.5rem] container mx-auto px-4 py-4 md:px-6 md:py-5 flex items-center justify-between'>
+      <div className='h-[4rem] container mx-auto px-4 py-4 md:px-6 md:py-5 flex items-center justify-between'>
         <h1 className='text-2xl font-bold'>Tincan</h1>
         <div className='flex items-center gap-4'>
           <div className='flex items-center gap-2 text-gray-500'>
@@ -53,10 +55,10 @@ const Header = () => {
             <span>{time}</span> {/* Display the formatted time */}
           </div>
           <Link href='/profile'>
-            <Avatar>
-              <AvatarImage alt='@jaredpalmer' src={avatarUrl} />
-              <AvatarFallback>{username}</AvatarFallback>
-            </Avatar>
+            <UserAvatar
+              profile={{ avatar_url: avatarUrl, user_id: userId, username }}
+              className='w-10 h-10'
+            />
           </Link>
         </div>
       </div>

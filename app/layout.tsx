@@ -23,17 +23,6 @@ export const metadata = {
 };
 
 const setupTheme = () => {
-  // if (
-  //   localStorage.theme === "dark" ||
-  //   (!("theme" in localStorage) &&
-  //     window.matchMedia("(prefers-color-scheme: dark)").matches)
-  // ) {
-  //   document.documentElement.classList.add("dark");
-  // } else {
-  //   document.documentElement.classList.remove("dark");
-  // }
-
-  // Whenever the user explicitly chooses light mode
   localStorage.theme = "light";
 
   // Whenever the user explicitly chooses to respect the OS preference
@@ -61,7 +50,7 @@ export default async function RootLayout({
         <main className='min-h-screen flex flex-col items-center justify-center light'>
           <div className='flex flex-col sm:h-[96vh] h-screen  w-full max-w-[28rem] sm:shadow-[rgba(6,_24,_44,_0.4)_0px_0px_0px_2px,_rgba(6,_24,_44,_0.65)_0px_4px_6px_-1px,_rgba(255,_255,_255,_0.08)_0px_1px_0px_inset]'>
             <Header />
-            <div className='flex-1 overflow-y-scroll mt-[4.5rem] mb-[4.5rem]'>
+            <div className='flex-1 overflow-y-scroll mt-[4rem] mb-[4.5rem]'>
               {children}
             </div>
             <Tabbar />

@@ -11,34 +11,44 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { LightHabit } from "@/type";
 import Calendar from "./calendar";
 
-const lightHabits = [
-  {
-    habit_id: "idaaaaa",
-    title: "喝水",
-  },
-  {
-    habit_id: "idbbbbb",
-    title: "健身",
-  },
-  {
-    habit_id: "idccccc",
-    title: "打羽球",
-  },
-  {
-    habit_id: "idddddd",
-    title: "摸貓咪",
-  },
-  {
-    habit_id: "ideeeee",
-    title: "踹狗",
-  },
-];
+import { useParams, useRouter } from "next/navigation";
+// const lightHabits = [
+//   {
+//     habit_id: "idaaaaa",
+//     title: "喝水",
+//   },
+//   {
+//     habit_id: "idbbbbb",
+//     title: "健身",
+//   },
+//   {
+//     habit_id: "idccccc",
+//     title: "打羽球",
+//   },
+//   {
+//     habit_id: "idddddd",
+//     title: "摸貓咪",
+//   },
+//   {
+//     habit_id: "ideeeee",
+//     title: "踹狗",
+//   },
+// ];
 
-const SelectHabit = () => {
-  const [open, setOpen] = React.useState(false);
-  const [habitId, setHabitId] = React.useState("");
+const SelectHabit = ({
+  lightHabits,
+  selectedHabitId,
+}: {
+  lightHabits: LightHabit[];
+  selectedHabitId: string;
+}) => {
+  const params = useParams<{ habit_id: string }>();
+  const router = useRouter();
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [habitId, setHabitId] = React.useState<string>(params.habit_id);
   // habitId 存目前選擇哪個 habit 的 id，目前應該沒有總完成率這個選項，有空可以再加
 
   return (
@@ -70,8 +80,8 @@ const SelectHabit = () => {
                     key={lightHabit.habit_id}
                     value={lightHabit.habit_id}
                     onSelect={(currentValue) => {
-                      // currentValue 就是目前選擇到的那個 habit_id
-                      setHabitId(currentValue === habitId ? "" : currentValue);
+                      router.push(`/report/${lightHabit.habit_id}`);
+                      setHabitId(currentValue);
                       setOpen(false);
                     }}
                   >
