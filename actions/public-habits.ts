@@ -35,7 +35,7 @@ const getPublicHabits = async (user_id: string): Promise<PublicHabit[]> => {
     return [];
   }
 
-  const userIds = joinedData.map((join: JoinTable) => join.user_id);
+  const userIds = joinedData.map((join: { habit_instance_id: string; user_id: string}) => join.user_id);
 
   // Fetch profile details for the joined users
   const { data: profilesData, error: profilesError } = await supabase
@@ -71,7 +71,7 @@ const getPublicHabits = async (user_id: string): Promise<PublicHabit[]> => {
     return [];
   }
 
-  const userJoinedHabitIds = userJoinedData.map((join: JoinTable) => join.habit_instance_id);
+  const userJoinedHabitIds = userJoinedData.map((join: { habit_instance_id: string }) => join.habit_instance_id);
 
   // 4. Combine data to create the final public habits result
   const publicHabits: PublicHabit[] = habitsData.map((habit: HabitTable) => ({
