@@ -1,6 +1,5 @@
 "use client";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 import Image from "next/image";
 import ReactionButton, { REACTIONS } from "./reaction-button";
@@ -8,18 +7,14 @@ import ReactionButton, { REACTIONS } from "./reaction-button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Post as PostType, Reaction, ReactionType } from "@/type";
 import { useState } from "react";
+import UserAvatar from "./user-avatar";
 
 const ReactionRow = ({ reaction }: { reaction: Reaction }) => {
+  const { reaction_type, ...profile } = reaction;
   return (
     <div className='w-full flex gap-4 px-4 items-center justify-between'>
       <div className='flex gap-4 items-center'>
-        <Avatar className='w-12 h-12'>
-          <AvatarImage
-            alt={reaction.username}
-            src={reaction.avatar_url as string}
-          />
-          <AvatarFallback>{reaction.username}</AvatarFallback>
-        </Avatar>
+        <UserAvatar profile={profile} className='w-12 h-12' />
         <div className='flex items-center justify-between'>
           <div className='flex gap-2'>
             <h3 className='text-lg text-gray-900'>{reaction.username}</h3>
@@ -116,10 +111,14 @@ const Post = ({ post, userId }: { post: PostType; userId: string }) => {
     <div className='p-2 md:p-4 h-fit flex flex-col gap-4 bg-white'>
       <div className='flex items-start space-x-4'>
         <div className='flex-shrink-0'>
-          <Avatar>
-            <AvatarImage alt={post.username} src={post.avatar_url} />
-            <AvatarFallback>{post.username}</AvatarFallback>
-          </Avatar>
+          <UserAvatar
+            profile={{
+              username: post.username,
+              user_id: post.creator_user_id,
+              avatar_url: post.avatar_url,
+            }}
+            className='w-10 h-10'
+          />
         </div>
         <div className='flex-1 flex flex-col gap-2'>
           <div className='flex items-center justify-between'>

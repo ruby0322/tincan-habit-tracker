@@ -3,9 +3,10 @@
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import UserAvatar from "./user-avatar";
 
 const Header = () => {
+  const [userId, setUserId] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   // Get current date and format it
@@ -37,6 +38,7 @@ const Header = () => {
       if (profiles && profiles.length > 0) {
         setUsername(profiles[0].username);
         setAvatarUrl(profiles[0].avatar_url);
+        setUserId(profiles[0].user_id);
       }
     };
     getUserProfile();
@@ -53,10 +55,10 @@ const Header = () => {
             <span>{time}</span> {/* Display the formatted time */}
           </div>
           <Link href='/profile'>
-            <Avatar>
-              <AvatarImage alt='@jaredpalmer' src={avatarUrl} />
-              <AvatarFallback>{username}</AvatarFallback>
-            </Avatar>
+            <UserAvatar
+              profile={{ avatar_url: avatarUrl, user_id: userId, username }}
+              className='w-10 h-10'
+            />
           </Link>
         </div>
       </div>
