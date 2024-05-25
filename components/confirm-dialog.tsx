@@ -5,6 +5,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { MouseEventHandler, ReactNode, useState } from "react";
+import { Button } from "./ui/button";
 import { DialogFooter, DialogHeader } from "./ui/dialog";
 import { LoadingButton } from "./ui/loading-button";
 
@@ -38,12 +39,23 @@ const ConfirmDialog = ({
           {children}
         </div>
       </DialogTrigger>
-      <DialogContent className='sm:w-[32rem] w-[88vw]'>
+      <DialogContent
+        onInteractOutside={() => {
+          setDialogOpen(false);
+        }}
+        onEscapeKeyDown={() => {
+          setDialogOpen(false);
+        }}
+        className='sm:w-[32rem] w-[88vw]'
+      >
         <DialogHeader>
           {title && <DialogTitle>{title}</DialogTitle>}
         </DialogHeader>
         {text}
         <DialogFooter>
+          <Button variant='outline' onClick={() => setDialogOpen(false)}>
+            取消
+          </Button>
           <LoadingButton
             loading={loading}
             type='submit'
@@ -51,7 +63,7 @@ const ConfirmDialog = ({
             variant='default'
             onClick={onSubmit}
           >
-            儲存
+            我確定
           </LoadingButton>
         </DialogFooter>
       </DialogContent>
