@@ -4,19 +4,10 @@ import { DailyHabit, HabitTable, LightHabit, RecordTable } from "@/type";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
-const WEEK_DAYS: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const WEEK_DAYS: string[] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const getDailyHabits = async (
   creator_user_id: string
 ): Promise<DailyHabit[]> => {
-  const weekDays: { [weekday: string]: string } = {
-    0: "Mon",
-    1: "Tue",
-    2: "Wed",
-    3: "Thu",
-    4: "Fri",
-    5: "Sat",
-    6: "Sun",
-  };
   const supabase = createClient();
   const dayOfWeek = WEEK_DAYS[new Date().getDay()];
 
