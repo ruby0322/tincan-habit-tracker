@@ -57,6 +57,12 @@ const getDailyHabits = async (
     num_completed_unit: recordsMap[habit.habit_id] || 0,
   }));
 
+  dailyHabits.sort((a, b) => {
+    const aRatio = a.num_daily_goal_unit ? a.num_completed_unit / a.num_daily_goal_unit : 0;
+    const bRatio = b.num_daily_goal_unit ? b.num_completed_unit / b.num_daily_goal_unit : 0;
+    return aRatio - bRatio;
+  });
+
   return dailyHabits;
 };
 
