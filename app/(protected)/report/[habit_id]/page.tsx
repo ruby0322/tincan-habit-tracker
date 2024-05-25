@@ -12,7 +12,10 @@ const ReportPage = async ({ params }: { params: { habit_id: string } }) => {
   const lightHabits = await getLightHabits(user?.id as string);
   return (
     <div className='p-4 flex justify-center align-center'>
-      <SelectHabit lightHabits={lightHabits} />
+      <SelectHabit
+        selectedHabitId={params.habit_id}
+        lightHabits={lightHabits}
+      />
     </div>
   );
 };
