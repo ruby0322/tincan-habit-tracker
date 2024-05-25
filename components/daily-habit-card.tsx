@@ -106,7 +106,7 @@ const CardBack = ({
   };
   const onReportClick = async (e: MouseEvent) => {
     e.stopPropagation();
-    router.push(`/report/${dailyHabit.creator_user_id}`);
+    router.push(`/report/${dailyHabit.habit_id}`);
   };
   return (
     <div
