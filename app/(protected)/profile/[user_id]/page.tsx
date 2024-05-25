@@ -18,24 +18,23 @@ const ProfilePage = async ({ params }: { params: { user_id: string } }) => {
     data: { user },
   } = await supabase.auth.getUser();
   const userId = user?.id;
-  const userProfile = await getUserProfile(userId as string);
+  const userProfile = await getUserProfile(params.user_id as string);
 
   const followers = await getFollowers(user?.id as string);
   const followings = await getFollowings(user?.id as string);
 
   return (
     <div>
-      {/* { userId === params.user_id && } */}
-      {/* 上半部（個人資料） */}
       <ProfileBar
         userId={userId as string}
+        profileId={params.user_id}
         username={userProfile.username as string}
         email={user?.email as string}
         isMe={user?.id == params.user_id}
         avatar={userProfile.avatar_url as string}
       />
       {/* 下半部（追蹤） */}
-      <div className='p-4'>
+      <div className='flex w-full px-2 items-center justify-center'>
         <Tabs defaultValue='follower' className='w-[400px]'>
           <TabsList className='grid w-full grid-cols-2'>
             <TabsTrigger value='follower'>粉絲</TabsTrigger>

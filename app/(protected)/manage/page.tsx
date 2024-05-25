@@ -11,11 +11,7 @@ export default async function HomePage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const habits = (await getDailyHabits(user?.id as string)).sort(
-    (a, b) =>
-      a.num_completed_unit / a.num_daily_goal_unit -
-      b.num_completed_unit / b.num_daily_goal_unit
-  );
+  const habits = await getDailyHabits(user?.id as string);
   return (
     <>
       {Array.from({ length: Math.ceil(habits.length / 4) }).map((_, index) => (
