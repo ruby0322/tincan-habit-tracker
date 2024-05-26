@@ -27,6 +27,7 @@ const EditProfileDialog = ({ userId }: { userId: string }) => {
     setLoading(true);
     await updateProfile(userId, newUsername);
     setLoading(false);
+    setDialogOpen(false);
   };
   return (
     <Dialog open={dialogOpen}>

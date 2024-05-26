@@ -119,7 +119,12 @@ const createProfile = async (user_id: string): Promise<boolean> => {
 
     const { error } = await supabase
       .from("profile")
-      .insert({ user_id, username: finalUsername, avatar_url: null });
+      .insert({
+        user_id,
+        username: finalUsername,
+        avatar_url:
+          "https://dmbkhireuarjpvecjmds.supabase.co/storage/v1/object/public/avatar/d41d8cd98f00b204e9800998ecf8427e.png",
+      });
 
     if (error) {
       throw new Error(`Error inserting profile data: ${error.message}`);
@@ -193,6 +198,12 @@ const checkFollowing = async (
   return true;
 };
 
+const signOut = async () => {
+  const supabase = createClient();
+  await supabase.auth.signOut();
+  return true;
+};
+
 export {
   checkFollowing,
   createProfile,
@@ -201,5 +212,6 @@ export {
   getFollowings,
   getUserProfile,
   searchUser,
+  signOut,
   updateProfile,
 };

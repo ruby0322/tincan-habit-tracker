@@ -2,7 +2,6 @@
 
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { ProfileTable } from "@/type";
-import { useState } from "react";
 import UserRow from "./user-row";
 
 const FollowerDrawer = ({
@@ -68,14 +67,11 @@ const FollowBar = ({
   profileId: string;
   userId: string;
 }) => {
-  const [followerDrawerOpen, setFollowerDrawerOpen] = useState<boolean>(false);
-  const [followingDrawerOpen, setFollowingDrawerOpen] =
-    useState<boolean>(false);
   return (
     <div className='w-full justify-between px-12 flex gap-6'>
       <Drawer>
         <DrawerTrigger asChild>
-          <div className='flex flex-col items-center'>
+          <div className='cursor-pointer flex flex-col items-center'>
             <h3 className='text-xs font-semibold'>追蹤者</h3>
             <span className='text-2xl font-bold'>{followers.length}</span>
           </div>
@@ -90,7 +86,7 @@ const FollowBar = ({
       </Drawer>
       <Drawer>
         <DrawerTrigger asChild>
-          <div className='flex flex-col items-center'>
+          <div className='cursor-pointer flex flex-col items-center'>
             <h3 className='text-xs font-semibold'>追蹤中</h3>
             <span className='text-2xl font-bold'>{followings.length}</span>
           </div>

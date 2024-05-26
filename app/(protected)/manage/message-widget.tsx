@@ -41,6 +41,11 @@ const MessageWidget = ({ dailyHabits }: { dailyHabits: DailyHabit[] }) => {
             </div>
           </SliderMainItem>
         ))}
+        {dailyHabits.length === 0 && (
+          <div className='w-full h-full text-center flex items-center justify-center text-gray-500'>
+            <div>你還沒收到錫罐的訊息，趕快建立習慣吧！</div>
+          </div>
+        )}
       </CarouselMainContainer>
     </Carousel>
   );

@@ -2,6 +2,7 @@
 
 import { getMyPosts } from "@/actions/post";
 import { getFollowers, getFollowings, getUserProfile } from "@/actions/user";
+import AuthButton from "@/components/auth-button";
 import Post from "@/components/post";
 import UserAvatar from "@/components/user-avatar";
 import { createClient } from "@/utils/supabase/server";
@@ -35,7 +36,9 @@ const ProfilePage = async ({ params }: { params: { user_id: string } }) => {
       </div>
       <div className='w-full gap-1 flex items-center justify-center text-xl font-bold text-center'>
         <h3>{userProfile.username}</h3>
-        <EditProfileDialog userId={userId as string} />
+        {user?.id === params.user_id && (
+          <EditProfileDialog userId={userId as string} />
+        )}
       </div>
       <FollowBar
         userId={userId as string}
@@ -43,11 +46,13 @@ const ProfilePage = async ({ params }: { params: { user_id: string } }) => {
         followers={followers}
         followings={followings}
       />
-      {user?.id !== params.user_id && (
+      {user?.id !== params.user_id ? (
         <FollowButton
           user_id={userId as string}
           profile_id={userProfile.user_id}
         />
+      ) : (
+        <AuthButton />
       )}
       <div className='w-full flex flex-col gap-2'>
         {userPosts.map((post, index) => {
