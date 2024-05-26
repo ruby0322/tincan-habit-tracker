@@ -31,6 +31,7 @@ const getMyPosts = async (user_id: string): Promise<Post[]> => {
   }
 
   const postIds = posts.map((post) => post.post_id);
+  const habitIds = posts.map((post) => post.habit_id);
 
   const { data: reactions, error: reactionError } = await supabase
     .from("react_to")
@@ -51,6 +52,30 @@ const getMyPosts = async (user_id: string): Promise<Post[]> => {
     throw new Error(`Error fetching reactions: ${reactionError.message}`);
   }
 
+
+  const { data: records, error: recordsError } = await supabase
+    .from("record")
+    .select("habit_id, num_completed_unit, created_at")
+    .in("habit_id", habitIds);
+
+  if (recordsError) {
+    throw new Error(`Error fetching records: ${recordsError.message}`);
+  }
+
+  const habitRecordMap: { [key: number]: { total: number, daily: number } } = {};
+  const today = new Date().toISOString().split('T')[0];
+
+  records.forEach(record => {
+    const recordDate = record.created_at.split('T')[0];
+    if (!habitRecordMap[record.habit_id]) {
+      habitRecordMap[record.habit_id] = { total: 0, daily: 0 };
+    }
+    habitRecordMap[record.habit_id].total += record.num_completed_unit;
+    if (recordDate === today) {
+      habitRecordMap[record.habit_id].daily += record.num_completed_unit;
+    }
+  });
+
   const postsWithReactions: Post[] = posts.map((post) => {
     const postReactions = reactions
       .filter((reaction) => reaction.post_id === post.post_id)
@@ -59,28 +84,30 @@ const getMyPosts = async (user_id: string): Promise<Post[]> => {
         post_id: reaction.post_id,
         ...reaction.profile,
       }));
+    const habitData = habitRecordMap[post.habit_id] || { total: 0, daily: 0 };
     const newPost = {
       ...post,
       username: post.profile.username,
       avatar_url: post.profile.avatar_url,
       picture_url: post.habit.picture_url,
       reactions: postReactions,
+      num_completed_daily_goal_unit: habitData.daily,
+      num_total_completed_unit: habitData.total,
     };
     delete newPost.profile;
     delete newPost.habit;
     return newPost;
   });
 
-  return (postsWithReactions as Post[]).sort(
-    (a, b) =>
-      new Date(b.created_at as string).getTime() -
-      new Date(a.created_at as string).getTime()
-  );
+  return postsWithReactions;
 };
 
 const getAllPosts = async (): Promise<Post[]> => {
   const supabase = createClient();
-  const { data: posts, error: postError } = await supabase.from("post").select(`
+  const { data: posts, error: postError } = await supabase
+    .from("post")
+    .select(
+      `
       *,
       profile:creator_user_id (
         username,
@@ -89,7 +116,8 @@ const getAllPosts = async (): Promise<Post[]> => {
       habit:habit_id (
         picture_url
       )
-    `);
+    `
+    );
 
   if (postError) {
     throw new Error(`Error fetching posts: ${postError.message}`);
@@ -99,6 +127,7 @@ const getAllPosts = async (): Promise<Post[]> => {
   }
 
   const postIds = posts.map((post) => post.post_id);
+  const habitIds = posts.map((post) => post.habit_id);
 
   const { data: reactions, error: reactionError } = await supabase
     .from("react_to")
@@ -119,6 +148,29 @@ const getAllPosts = async (): Promise<Post[]> => {
     throw new Error(`Error fetching reactions: ${reactionError.message}`);
   }
 
+  const { data: records, error: recordsError } = await supabase
+    .from("record")
+    .select("habit_id, num_completed_unit, created_at")
+    .in("habit_id", habitIds);
+
+  if (recordsError) {
+    throw new Error(`Error fetching records: ${recordsError.message}`);
+  }
+
+  const habitRecordMap: { [key: number]: { total: number, daily: number } } = {};
+  const today = new Date().toISOString().split('T')[0];
+
+  records.forEach(record => {
+    const recordDate = record.created_at.split('T')[0];
+    if (!habitRecordMap[record.habit_id]) {
+      habitRecordMap[record.habit_id] = { total: 0, daily: 0 };
+    }
+    habitRecordMap[record.habit_id].total += record.num_completed_unit;
+    if (recordDate === today) {
+      habitRecordMap[record.habit_id].daily += record.num_completed_unit;
+    }
+  });
+
   const postsWithReactions: Post[] = posts.map((post) => {
     const postReactions = reactions
       .filter((reaction) => reaction.post_id === post.post_id)
@@ -127,29 +179,32 @@ const getAllPosts = async (): Promise<Post[]> => {
         post_id: reaction.post_id,
         ...reaction.profile,
       }));
+    const habitData = habitRecordMap[post.habit_id] || { total: 0, daily: 0 };
     const newPost = {
       ...post,
       username: post.profile.username,
       avatar_url: post.profile.avatar_url,
       picture_url: post.habit.picture_url,
       reactions: postReactions,
+      num_completed_daily_goal_unit: habitData.daily,
+      num_total_completed_unit: habitData.total,
     };
     delete newPost.profile;
     delete newPost.habit;
     return newPost;
   });
 
-  return (postsWithReactions as Post[]).sort(
+  return postsWithReactions.sort(
     (a, b) =>
       new Date(b.created_at as string).getTime() -
       new Date(a.created_at as string).getTime()
   );
 };
 
+
 const getFollowingUserPosts = async (user_id: string): Promise<Post[]> => {
   const supabase = createClient();
 
-  // 获取关注的用户列表
   const { data: followData, error: followError } = await supabase
     .from("follow")
     .select("following_id")
@@ -165,7 +220,6 @@ const getFollowingUserPosts = async (user_id: string): Promise<Post[]> => {
 
   const followingUserIds = followData.map((follow) => follow.following_id);
 
-  // 获取所有关注用户的帖子
   const allPosts: Post[] = [];
   for (const followingUserId of followingUserIds) {
     try {

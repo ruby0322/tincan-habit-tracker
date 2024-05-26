@@ -33,6 +33,8 @@ export type Post = PostTable & {
   avatar_url: string;
   picture_url: string;
   reactions: Reaction[];
+  num_completed_daily_goal_unit: number;
+  num_total_completed_unit: number;
 };
 
 export type Profile = ProfileTable & { isFollowing: boolean };

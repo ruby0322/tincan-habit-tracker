@@ -53,26 +53,21 @@ export default async function Playground2() {
   //     console.error("Error during backend function calls", error);
   // }
 
-  //test posts
-  // try {
-      // const newPosts = await createPost(new_user_id, habit_id, content);
-      // console.log("new posts", newPosts);
+  // test posts
+  try {
 
-  //     const deletePosts = await deletePost(post_id);
-  //     console.log("delete post", deletePosts);
-
-      // const myPosts = await getMyPosts(new_user_id);
+      // const myPosts = await getMyPosts(user_id);
       // console.log("me post", myPosts);
 
       // const allPosts = await getAllPosts();
       // console.log("all posts", allPosts);
 
-      // const followersPosts = await getFollowingUserPosts(new_user_id);
-      // console.log("follower posts", followersPosts);
+      const followersPosts = await getFollowingUserPosts(new_user_id);
+      console.log("follower posts", followersPosts);
 
-  // } catch (error) {
-  //     console.error("Error during backend function calls", error);
-  // }
+  } catch (error) {
+      console.error("Error during backend function calls", error);
+  }
 
   //test react
   // try {
