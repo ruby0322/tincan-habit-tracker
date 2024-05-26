@@ -39,10 +39,10 @@ const SocialPage = async () => {
     <Tabs defaultValue='popular' className='w-full p-4 border-0'>
       <div className='w-full h-full'>
         <div className='flex w-full gap-4 items-center'>
-          <TabsList className='grid w-full grid-cols-3'>
+          <TabsList className='grid w-full grid-cols-2'>
             <TabsTrigger value='popular'>熱門</TabsTrigger>
             <TabsTrigger value='friends'>追蹤</TabsTrigger>
-            <TabsTrigger value='community'>社群活動</TabsTrigger>
+            {/* <TabsTrigger value='community'>社群活動</TabsTrigger> */}
           </TabsList>
           {/* <Button size='icon' variant='outline' className='self-end'>
             <SquarePen className='w-12 text-gray-400 p-[2px]' />

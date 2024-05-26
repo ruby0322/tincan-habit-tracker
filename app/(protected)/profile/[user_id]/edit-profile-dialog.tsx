@@ -1,4 +1,6 @@
-import { Button } from "@/components/ui/button";
+"use client";
+
+import { updateProfile } from "@/actions/user";
 import {
   Dialog,
   DialogContent,
@@ -10,33 +12,41 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoadingButton } from "@/components/ui/loading-button";
-import { ChangeEvent } from "react";
+import { PencilLine } from "lucide-react";
+import { ChangeEvent, useState } from "react";
 
-const EditButton = ({
-  dialogOpen,
-  loading,
-  newUsername,
-  setNewUsername,
-  onSubmit,
-}: {
-  dialogOpen: boolean;
-  loading: boolean;
-  newUsername: string;
-  setNewUsername: (x: string) => void;
-  onSubmit: () => void;
-}) => {
+const EditProfileDialog = ({ userId }: { userId: string }) => {
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [newUsername, setNewUsername] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    if (e.target.value) {
-      setNewUsername(e.target.value);
-    }
+    setNewUsername(e.target.value);
+  };
+  const onSubmit = async () => {
+    setLoading(true);
+    await updateProfile(userId, newUsername);
+    setLoading(false);
   };
   return (
     <Dialog open={dialogOpen}>
       <DialogTrigger asChild>
-        <Button variant='outline'>編輯</Button>
+        <PencilLine
+          onClick={(e) => {
+            setDialogOpen(true);
+          }}
+          className='cursor-pointer w-4 h-4 text-gray-400'
+        />
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
+      <DialogContent
+        onInteractOutside={(e) => {
+          setDialogOpen(false);
+        }}
+        onEscapeKeyDown={(e) => {
+          setDialogOpen(false);
+        }}
+        className='sm:max-w-[425px]'
+      >
         <DialogHeader>
           <DialogTitle>編輯個人資料</DialogTitle>
         </DialogHeader>
@@ -70,4 +80,4 @@ const EditButton = ({
   );
 };
 
-export default EditButton;
+export default EditProfileDialog;

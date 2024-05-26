@@ -5,8 +5,9 @@ import { getFollowers, getFollowings, getUserProfile } from "@/actions/user";
 import Post from "@/components/post";
 import UserAvatar from "@/components/user-avatar";
 import { createClient } from "@/utils/supabase/server";
+import EditProfileDialog from "./edit-profile-dialog";
 import FollowBar from "./follow-bar";
-import ProfileBar from "./profile-bar";
+import FollowButton from "./follow-button";
 
 const ProfilePage = async ({ params }: { params: { user_id: string } }) => {
   const supabase = createClient();
@@ -32,8 +33,9 @@ const ProfilePage = async ({ params }: { params: { user_id: string } }) => {
           className='w-32 h-32 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]'
         />
       </div>
-      <div className='text-xl font-bold text-center'>
-        {userProfile.username}
+      <div className='w-full gap-1 flex items-center justify-center text-xl font-bold text-center'>
+        <h3>{userProfile.username}</h3>
+        <EditProfileDialog userId={userId as string} />
       </div>
       <FollowBar
         userId={userId as string}
@@ -41,17 +43,12 @@ const ProfilePage = async ({ params }: { params: { user_id: string } }) => {
         followers={followers}
         followings={followings}
       />
-      <ProfileBar
-        userId={userId as string}
-        profileId={params.user_id}
-        username={userProfile.username as string}
-        email={user?.email as string}
-        isMe={user?.id == params.user_id}
-        avatar={userProfile.avatar_url as string}
-      />
-      {/* <h2 className='text-center text-lg text-gray-600'>
-        {userProfile.username} 的貼文
-      </h2> */}
+      {user?.id !== params.user_id && (
+        <FollowButton
+          user_id={userId as string}
+          profile_id={userProfile.user_id}
+        />
+      )}
       <div className='w-full flex flex-col gap-2'>
         {userPosts.map((post, index) => {
           return (

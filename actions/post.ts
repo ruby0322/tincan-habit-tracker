@@ -71,7 +71,11 @@ const getMyPosts = async (user_id: string): Promise<Post[]> => {
     return newPost;
   });
 
-  return postsWithReactions as Post[];
+  return (postsWithReactions as Post[]).sort(
+    (a, b) =>
+      new Date(b.created_at as string).getTime() -
+      new Date(a.created_at as string).getTime()
+  );
 };
 
 const getAllPosts = async (): Promise<Post[]> => {
@@ -171,7 +175,11 @@ const getFollowingUserPosts = async (user_id: string): Promise<Post[]> => {
       console.error(`Error fetching posts for user ${followingUserId}`);
     }
   }
-  return allPosts;
+  return allPosts.sort(
+    (a, b) =>
+      new Date(b.created_at as string).getTime() -
+      new Date(a.created_at as string).getTime()
+  );
 };
 
 const createPost = async (dailyHabit: DailyHabit): Promise<boolean> => {
