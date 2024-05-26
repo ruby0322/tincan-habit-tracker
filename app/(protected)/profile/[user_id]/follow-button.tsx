@@ -24,6 +24,7 @@ const FollowButton = ({
   });
   const handleClickFollow = async () => {
     setLoading(true);
+    setIsFollowing((prev) => !prev);
     const supabase = createClient();
     const {
       data: { user },

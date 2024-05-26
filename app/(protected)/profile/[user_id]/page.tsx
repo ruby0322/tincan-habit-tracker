@@ -18,8 +18,8 @@ const ProfilePage = async ({ params }: { params: { user_id: string } }) => {
   const userId = user?.id;
   const userProfile = await getUserProfile(params.user_id as string);
 
-  const followers = await getFollowers(user?.id as string);
-  const followings = await getFollowings(user?.id as string);
+  const followers = await getFollowers(userProfile.user_id);
+  const followings = await getFollowings(userProfile.user_id);
   const userPosts = await getMyPosts(userProfile.user_id);
 
   return (
