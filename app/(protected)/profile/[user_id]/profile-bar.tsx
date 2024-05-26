@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 
 import { checkFollowing, followUser, updateProfile } from "@/actions/user";
 import { LoadingButton } from "@/components/ui/loading-button";
-import UserAvatar from "@/components/user-avatar";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import EditButton from "./edit-button";
@@ -123,17 +122,12 @@ const ProfileBar = ({
   avatar: string;
 }) => {
   return (
-    <div className='flex flex-col items-center justify-between p-4 gap-4'>
+    <div className='flex flex-col items-center justify-between gap-4'>
       <div className='flex flex-col w-full items-center gap-4'>
-        <UserAvatar
-          profile={{ avatar_url: avatar, user_id: userId, username }}
-          className='w-32 h-32 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]'
-        />
         {isMe ? (
           <EditCard userId={userId} username={username} email={email} />
         ) : (
           <div className='px-2 w-full flex gap-4 flex-col'>
-            <div className='text-xl font-bold text-center'>{username}</div>
             <FollowButton user_id={userId} profile_id={profileId} />
           </div>
         )}

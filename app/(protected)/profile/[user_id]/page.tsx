@@ -1,16 +1,12 @@
 "use server";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-import {
-  checkFollowing,
-  getFollowers,
-  getFollowings,
-  getUserProfile,
-} from "@/actions/user";
+import { getMyPosts } from "@/actions/post";
+import { getFollowers, getFollowings, getUserProfile } from "@/actions/user";
+import Post from "@/components/post";
+import UserAvatar from "@/components/user-avatar";
 import { createClient } from "@/utils/supabase/server";
+import FollowBar from "./follow-bar";
 import ProfileBar from "./profile-bar";
-import UserRow from "./user-row";
 
 const ProfilePage = async ({ params }: { params: { user_id: string } }) => {
   const supabase = createClient();
@@ -22,9 +18,29 @@ const ProfilePage = async ({ params }: { params: { user_id: string } }) => {
 
   const followers = await getFollowers(user?.id as string);
   const followings = await getFollowings(user?.id as string);
+  const userPosts = await getMyPosts(userProfile.user_id);
 
   return (
-    <div>
+    <div className='px-4 flex flex-col gap-6'>
+      <div className='flex items-center justify-center pt-8'>
+        <UserAvatar
+          profile={{
+            avatar_url: userProfile.avatar_url,
+            user_id: userProfile.user_id,
+            username: userProfile.username,
+          }}
+          className='w-32 h-32 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]'
+        />
+      </div>
+      <div className='text-xl font-bold text-center'>
+        {userProfile.username}
+      </div>
+      <FollowBar
+        userId={userId as string}
+        profileId={userProfile.user_id}
+        followers={followers}
+        followings={followings}
+      />
       <ProfileBar
         userId={userId as string}
         profileId={params.user_id}
@@ -33,50 +49,19 @@ const ProfilePage = async ({ params }: { params: { user_id: string } }) => {
         isMe={user?.id == params.user_id}
         avatar={userProfile.avatar_url as string}
       />
-      {/* 下半部（追蹤） */}
-      <div className='flex w-full px-2 items-center justify-center'>
-        <Tabs defaultValue='follower' className='w-[400px]'>
-          <TabsList className='grid w-full grid-cols-2'>
-            <TabsTrigger value='follower'>粉絲</TabsTrigger>
-            <TabsTrigger value='following'>追蹤中</TabsTrigger>
-          </TabsList>
-          <TabsContent value='follower'>
-            {followers.map(async (follower) => {
-              const isFollowing = await checkFollowing(
-                user?.id as string,
-                follower.user_id
-              );
-              return (
-                <UserRow
-                  key={`user-row-${follower.user_id}`}
-                  username={follower.username}
-                  user_id={follower.user_id}
-                  avatar={follower.avatar_url as string}
-                  isFollowing={isFollowing}
-                  profile_id={params.user_id}
-                />
-              );
-            })}
-          </TabsContent>
-          <TabsContent value='following'>
-            {followings.map(async (following) => {
-              const isFollowing = await checkFollowing(
-                user?.id as string,
-                following.user_id
-              );
-              return (
-                <UserRow
-                  key={`user-row-${following.user_id}`}
-                  username={following.username}
-                  user_id={following.user_id}
-                  avatar={following.avatar_url as string}
-                  isFollowing={isFollowing}
-                  profile_id={params.user_id}
-                />
-              );
-            })}
-          </TabsContent>
-        </Tabs>
+      {/* <h2 className='text-center text-lg text-gray-600'>
+        {userProfile.username} 的貼文
+      </h2> */}
+      <div className='w-full flex flex-col gap-2'>
+        {userPosts.map((post, index) => {
+          return (
+            <Post
+              userId={userProfile.user_id}
+              key={`post-${index}`}
+              post={post}
+            />
+          );
+        })}
       </div>
     </div>
   );

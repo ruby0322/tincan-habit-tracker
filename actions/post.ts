@@ -135,7 +135,11 @@ const getAllPosts = async (): Promise<Post[]> => {
     return newPost;
   });
 
-  return postsWithReactions as Post[];
+  return (postsWithReactions as Post[]).sort(
+    (a, b) =>
+      new Date(b.created_at as string).getTime() -
+      new Date(a.created_at as string).getTime()
+  );
 };
 
 const getFollowingUserPosts = async (user_id: string): Promise<Post[]> => {

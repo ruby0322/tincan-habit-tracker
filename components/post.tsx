@@ -128,7 +128,13 @@ const Post = ({ post, userId }: { post: PostType; userId: string }) => {
               </h3>
               <p className='text-sm text-gray-500'>
                 {new Date(post.created_at as string).toLocaleDateString(
-                  "zh-TW"
+                  "zh-TW",
+                  {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  }
                 )}
               </p>
             </div>
