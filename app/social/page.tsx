@@ -7,6 +7,7 @@ import { createClient } from "@/utils/supabase/server";
 
 const FollowingUserPosts = async ({ userId }: { userId: string }) => {
   const followingUserPosts = await getFollowingUserPosts(userId);
+  if (userId.length === 0) return <div>請先登入</div>;
   return (
     <>
       {followingUserPosts.map((post, index) => {
