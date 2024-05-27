@@ -3,6 +3,7 @@
 import { Profile, ProfileTable } from "@/type";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
+import { v4 as uuidv4 } from "uuid";
 
 const getUserProfile = async (user_id: string): Promise<Profile> => {
   const supabase = createClient();
@@ -117,14 +118,12 @@ const createProfile = async (user_id: string): Promise<boolean> => {
     }
     const finalUsername = user.email?.split("@")[0];
 
-    const { error } = await supabase
-      .from("profile")
-      .insert({
-        user_id,
-        username: finalUsername,
-        avatar_url:
-          "https://dmbkhireuarjpvecjmds.supabase.co/storage/v1/object/public/avatar/d41d8cd98f00b204e9800998ecf8427e.png",
-      });
+    const { error } = await supabase.from("profile").insert({
+      user_id,
+      username: finalUsername,
+      avatar_url:
+        "https://dmbkhireuarjpvecjmds.supabase.co/storage/v1/object/public/avatar/d41d8cd98f00b204e9800998ecf8427e.png",
+    });
 
     if (error) {
       throw new Error(`Error inserting profile data: ${error.message}`);
@@ -140,7 +139,7 @@ const createProfile = async (user_id: string): Promise<boolean> => {
 const updateProfile = async (
   user_id: string,
   username?: string,
-  avatar_url?: string
+  pictureBase64?: string
 ): Promise<boolean> => {
   try {
     const supabase = createClient();
@@ -160,8 +159,30 @@ const updateProfile = async (
       updateData.username = username || user.email?.split("@")[0];
     }
 
-    if (avatar_url) {
-      updateData.avatar_url = avatar_url || null;
+    console.log("pictureBase64", pictureBase64);
+    if (pictureBase64) {
+      console.log("uploading picture...");
+      const supabase = createClient();
+
+      /* Upload picture to supabase storage */
+      const filename = uuidv4();
+      const { error } = await supabase.storage
+        .from("avatar")
+        .upload(
+          filename,
+          Buffer.from(
+            pictureBase64.replace(/data:image\/([^;]+);base64,/, ""),
+            "base64"
+          )
+        );
+      console.log(error);
+      /* Retrieve avatar URL */
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("avatar").getPublicUrl(filename);
+      updateData.avatar_url = publicUrl;
+      console.log("done uploading picture...");
+      console.log(publicUrl);
     }
 
     const { error } = await supabase

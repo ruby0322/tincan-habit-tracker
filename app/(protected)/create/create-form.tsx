@@ -6,11 +6,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import { ChangeEvent } from "react";
+
+const WEEK_DAYS: { [key: string]: string } = {
+  Mon: "一",
+  Tue: "二",
+  Wed: "三",
+  Thu: "四",
+  Fri: "五",
+  Sat: "六",
+  Sun: "日",
+};
 
 const CreateForm = ({
   title,
@@ -126,20 +136,31 @@ const CreateForm = ({
             />
           </div>
           <div className='flex flex-col space-y-3'>
-            <Label htmlFor='failure-streak'>頻率</Label>
+            <Label htmlFor='failure-streak'>頻率（以週為單位）</Label>
             {/* checkbox * 7 */}
-            <div className='flex justify-center'>
+            {/* <div>{WEEK_DAYS[weekday]}</div> */}
+            <div className='w-full flex gap-0 items-center justify-center'>
               {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
-                (weekday) => (
+                (weekday, index) => (
                   <div
                     key={`checkbox-${weekday}`}
-                    className='px-2 flex flex-col items-center'
+                    className='flex justify-center items-center'
                   >
-                    <div>{weekday}</div>
-                    <Checkbox
+                    <div
                       id={weekday}
                       onClick={(checked) => getSetter(weekday)}
-                    />
+                      className={cn(
+                        "flex items-center justify-center cursor-pointer border-[1px] border-black w-8 h-8 m-0",
+                        frequency[weekday] ? "bg-lime-200" : "bg-red-200",
+                        index !== 6 && "border-r-0"
+                      )}
+                    >
+                      {WEEK_DAYS[weekday]}
+                    </div>
+                    {/* <Checkbox
+                      id={weekday}
+                      onClick={(checked) => getSetter(weekday)}
+                    /> */}
                   </div>
                 )
               )}
