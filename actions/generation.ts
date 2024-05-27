@@ -31,7 +31,7 @@ const generateHabitReminder = async (
   );
 };
 
-const BAD_PROGRESS_PROMPT = `請大家一起嘲笑他，詼諧地調侃用戶沒有辦法達成目標，但不失禮貌，並加上一些嘲諷的 emoji 和劇諷刺和搞笑意味的 hashtags`;
+const BAD_PROGRESS_PROMPT = `請大家一起嘲笑他，詼諧地調侃用戶沒有辦法達成目標，但不失禮貌，並加上一些嘲諷的 emoji 和具諷刺和搞笑意味的 hashtags`;
 const NORMAL_PROGRESS_PROMPT = `用輕鬆的口吻鼓勵用戶，並加上一些輕鬆的 emoji 和劇諷刺和搞笑意味的 hashtags`;
 const OK_PROGRESS_PROMPT = `積極鼓勵並期許進一步的進步，並加上一些激勵的 emoji 和搞笑但正向的 hashtags`;
 const GOOD_PROGRESS_PROMPT = `強力鼓勵並期許用戶達成目標，並加上一些鼓舞人心的 emoji 和搞笑但鼓舞人心的 hashtags`;

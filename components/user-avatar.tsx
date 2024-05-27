@@ -23,7 +23,9 @@ const UserAvatar = ({
           alt={profile.username}
           src={profile.avatar_url as string}
         />
-        <AvatarFallback>{profile.username}</AvatarFallback>
+        <AvatarFallback className='text-xs'>
+          {profile.username.length > 0 ? profile.username.length : "未登入"}
+        </AvatarFallback>
       </Avatar>
     </div>
   );

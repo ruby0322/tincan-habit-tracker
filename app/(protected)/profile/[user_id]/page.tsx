@@ -1,16 +1,14 @@
 "use server";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-import {
-  checkFollowing,
-  getFollowers,
-  getFollowings,
-  getUserProfile,
-} from "@/actions/user";
+import { getMyPosts } from "@/actions/post";
+import { getFollowers, getFollowings, getUserProfile } from "@/actions/user";
+import AuthButton from "@/components/auth-button";
+import Post from "@/components/post";
+import UserAvatar from "@/components/user-avatar";
 import { createClient } from "@/utils/supabase/server";
-import ProfileBar from "./profile-bar";
-import UserRow from "./user-row";
+import EditProfileDialog from "./edit-profile-dialog";
+import FollowBar from "./follow-bar";
+import FollowButton from "./follow-button";
 
 const ProfilePage = async ({ params }: { params: { user_id: string } }) => {
   const supabase = createClient();
@@ -20,63 +18,52 @@ const ProfilePage = async ({ params }: { params: { user_id: string } }) => {
   const userId = user?.id;
   const userProfile = await getUserProfile(params.user_id as string);
 
-  const followers = await getFollowers(user?.id as string);
-  const followings = await getFollowings(user?.id as string);
+  const followers = await getFollowers(userProfile.user_id);
+  const followings = await getFollowings(userProfile.user_id);
+  const userPosts = await getMyPosts(userProfile.user_id);
 
   return (
-    <div>
-      <ProfileBar
+    <div className='px-4 flex flex-col gap-6'>
+      <div className='flex items-center justify-center pt-8'>
+        <UserAvatar
+          profile={{
+            avatar_url: userProfile.avatar_url,
+            user_id: userProfile.user_id,
+            username: userProfile.username,
+          }}
+          className='w-32 h-32 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]'
+        />
+      </div>
+      <div className='w-full gap-1 flex items-center justify-center text-xl font-bold text-center'>
+        <h3>{userProfile.username}</h3>
+        {user?.id === params.user_id && (
+          <EditProfileDialog userId={userId as string} />
+        )}
+      </div>
+      <FollowBar
         userId={userId as string}
-        profileId={params.user_id}
-        username={userProfile.username as string}
-        email={user?.email as string}
-        isMe={user?.id == params.user_id}
-        avatar={userProfile.avatar_url as string}
+        profileId={userProfile.user_id}
+        followers={followers}
+        followings={followings}
       />
-      {/* 下半部（追蹤） */}
-      <div className='flex w-full px-2 items-center justify-center'>
-        <Tabs defaultValue='follower' className='w-[400px]'>
-          <TabsList className='grid w-full grid-cols-2'>
-            <TabsTrigger value='follower'>粉絲</TabsTrigger>
-            <TabsTrigger value='following'>追蹤中</TabsTrigger>
-          </TabsList>
-          <TabsContent value='follower'>
-            {followers.map(async (follower) => {
-              const isFollowing = await checkFollowing(
-                user?.id as string,
-                follower.user_id
-              );
-              return (
-                <UserRow
-                  key={`user-row-${follower.user_id}`}
-                  username={follower.username}
-                  user_id={follower.user_id}
-                  avatar={follower.avatar_url as string}
-                  isFollowing={isFollowing}
-                  profile_id={params.user_id}
-                />
-              );
-            })}
-          </TabsContent>
-          <TabsContent value='following'>
-            {followings.map(async (following) => {
-              const isFollowing = await checkFollowing(
-                user?.id as string,
-                following.user_id
-              );
-              return (
-                <UserRow
-                  key={`user-row-${following.user_id}`}
-                  username={following.username}
-                  user_id={following.user_id}
-                  avatar={following.avatar_url as string}
-                  isFollowing={isFollowing}
-                  profile_id={params.user_id}
-                />
-              );
-            })}
-          </TabsContent>
-        </Tabs>
+      {user?.id !== params.user_id ? (
+        <FollowButton
+          user_id={userId as string}
+          profile_id={userProfile.user_id}
+        />
+      ) : (
+        <AuthButton />
+      )}
+      <div className='w-full flex flex-col gap-2'>
+        {userPosts.map((post, index) => {
+          return (
+            <Post
+              userId={userProfile.user_id}
+              key={`post-${index}`}
+              post={post}
+            />
+          );
+        })}
       </div>
     </div>
   );

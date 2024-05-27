@@ -34,3 +34,5 @@ export type Post = PostTable & {
   picture_url: string;
   reactions: Reaction[];
 };
+
+export type Profile = ProfileTable & { isFollowing: boolean };

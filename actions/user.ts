@@ -1,11 +1,15 @@
 "use server";
 
-import { ProfileTable } from "@/type";
+import { Profile, ProfileTable } from "@/type";
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
-const getUserProfile = async (user_id: string): Promise<ProfileTable> => {
+const getUserProfile = async (user_id: string): Promise<Profile> => {
   const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isFollowing = await checkFollowing(user?.id as string, user_id);
   const { data, error } = await supabase
     .from("profile")
     .select("*")
@@ -16,7 +20,7 @@ const getUserProfile = async (user_id: string): Promise<ProfileTable> => {
   if (!data || data.length === 0) {
     throw new Error(`User with ID ${user_id} not found`);
   }
-  return data[0] as ProfileTable;
+  return { ...data[0], isFollowing };
 };
 
 const getFollowers = async (user_id: string): Promise<ProfileTable[]> => {
@@ -115,7 +119,12 @@ const createProfile = async (user_id: string): Promise<boolean> => {
 
     const { error } = await supabase
       .from("profile")
-      .insert({ user_id, username: finalUsername, avatar_url: null });
+      .insert({
+        user_id,
+        username: finalUsername,
+        avatar_url:
+          "https://dmbkhireuarjpvecjmds.supabase.co/storage/v1/object/public/avatar/d41d8cd98f00b204e9800998ecf8427e.png",
+      });
 
     if (error) {
       throw new Error(`Error inserting profile data: ${error.message}`);
@@ -189,6 +198,12 @@ const checkFollowing = async (
   return true;
 };
 
+const signOut = async () => {
+  const supabase = createClient();
+  await supabase.auth.signOut();
+  return true;
+};
+
 export {
   checkFollowing,
   createProfile,
@@ -197,5 +212,6 @@ export {
   getFollowings,
   getUserProfile,
   searchUser,
+  signOut,
   updateProfile,
 };
