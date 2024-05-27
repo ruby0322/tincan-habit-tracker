@@ -25,7 +25,7 @@ export default async function HomePage() {
               .map((habit, index) => {
                 return (
                   <DailyHabitCard
-                    key={`habit-card-${index}`}
+                    key={`habit-card-${habit.habit_id}`}
                     dailyHabit={habit}
                   />
                 );

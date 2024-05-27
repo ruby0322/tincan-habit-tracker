@@ -18,7 +18,7 @@ const UserAvatar = ({
   };
   return (
     <div onClick={onAvatarClick}>
-      <Avatar className={cn(className, "cursor-pointer")}>
+      <Avatar className={cn(className, "cursor-pointer object-cover")}>
         <AvatarImage
           alt={profile.username}
           src={profile.avatar_url as string}
