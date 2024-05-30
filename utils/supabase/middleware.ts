@@ -1,5 +1,5 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { type NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
 export const updateSession = async (request: NextRequest) => {
   // This `try/catch` block is only here for the interactive tutorial.
@@ -11,12 +11,24 @@ export const updateSession = async (request: NextRequest) => {
         headers: request.headers,
       },
     });
-    
-    console.log('testing:\nprocess.env.NEXT_PUBLIC_TESTING_SUPABASE_URL: ', process.env.NEXT_PUBLIC_TESTING_SUPABASE_URL!)
-    console.log('testing:\nprocess.env.NEXT_PUBLIC_TESTING_ANON_KEY: ', process.env.NEXT_PUBLIC_TESTING_SUPABASE_ANON_KEY!)
+
+    if (process.env.NEXT_PUBLIC_TESTING === "true") {
+      console.log(
+        "testing:\nprocess.env.NEXT_PUBLIC_TESTING_SUPABASE_URL: ",
+        process.env.NEXT_PUBLIC_TESTING_SUPABASE_URL!
+      );
+      console.log(
+        "testing:\nprocess.env.NEXT_PUBLIC_TESTING_ANON_KEY: ",
+        process.env.NEXT_PUBLIC_TESTING_SUPABASE_ANON_KEY!
+      );
+    }
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_TESTING === 'true' ? process.env.NEXT_PUBLIC_TESTING_SUPABASE_URL! : process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_TESTING === 'true' ? process.env.NEXT_PUBLIC_TESTING_SUPABASE_ANON_KEY! : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_TESTING === "true"
+        ? process.env.NEXT_PUBLIC_TESTING_SUPABASE_URL!
+        : process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_TESTING === "true"
+        ? process.env.NEXT_PUBLIC_TESTING_SUPABASE_ANON_KEY!
+        : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
           get(name: string) {
@@ -59,7 +71,7 @@ export const updateSession = async (request: NextRequest) => {
             });
           },
         },
-      },
+      }
     );
 
     // This will refresh session if expired - required for Server Components

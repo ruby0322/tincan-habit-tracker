@@ -10,10 +10,21 @@ import { DailyHabit } from "@/type";
 import { AreaChart, Minus, Plus, SquarePen, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { MouseEventHandler, useState } from "react";
+import { MouseEventHandler, useRef, useState } from "react";
 import ReactCardFlip from "react-card-flip";
 import ConfirmDialog from "./confirm-dialog";
 import { Button } from "./ui/button";
+
+function randomLocation() {
+  return {
+    x: Math.random() * window.innerWidth - window.innerWidth / 2 + "px",
+    y: Math.random() * window.innerHeight - window.innerHeight / 2 + "px",
+  };
+}
+
+function randomColor() {
+  return `hsl(${Math.floor(Math.random() * 361)}, 100%, 50%)`;
+}
 
 const CardFront = ({
   dailyHabit,
@@ -22,6 +33,7 @@ const CardFront = ({
   dailyHabit: DailyHabit;
   flip: () => void;
 }) => {
+  const buttonRef = useRef(null);
   const [numCompletedUnit, setNumCompletedUnit] = useState<number>(
     dailyHabit.num_completed_unit
   );
@@ -32,7 +44,6 @@ const CardFront = ({
       await incrementCompletedUnit(dailyHabit.habit_id);
     }
   };
-
   const onMinusClick = async (e: MouseEvent) => {
     e.stopPropagation();
     if (numCompletedUnit > 0) {
@@ -76,6 +87,7 @@ const CardFront = ({
         </div>
         <div className='cursor-pointer rounded-full border-2 border-gray-100 p-1'>
           <Plus
+            ref={buttonRef}
             onClick={onAddClick as unknown as MouseEventHandler<SVGSVGElement>}
             className='w-4 h-4 rounded-full'
           />

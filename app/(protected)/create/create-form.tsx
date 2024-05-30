@@ -151,8 +151,11 @@ const CreateForm = ({
                       onClick={(checked) => getSetter(weekday)}
                       className={cn(
                         "flex items-center justify-center cursor-pointer border-[1px] border-black w-8 h-8 m-0",
-                        frequency[weekday] ? "bg-lime-200" : "bg-red-200",
-                        index !== 6 && "border-r-0"
+                        frequency[weekday] ? "bg-green-200" : "bg-gray-200",
+                        "border-gray-800",
+                        index !== 6 && "border-r-0",
+                        index === 6 && "rounded-tr-xl rounded-br-xl",
+                        index === 0 && "rounded-tl-xl rounded-bl-xl"
                       )}
                     >
                       {WEEK_DAYS[weekday]}
