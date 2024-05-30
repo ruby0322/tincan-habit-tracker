@@ -11,6 +11,7 @@ Welcome to the Tin Can Habit Tracker! This project leverages Next.js, TypeScript
   - [Environment Variables](#environment-variables)
   - [Running the Application](#running-the-application)
   - [Running Tests](#running-tests)
+    - [Running Tests Locally or on Your Own Supabase](#running-tests-locally-or-on-your-own-supabase)
 
 
 ## Features
@@ -73,3 +74,24 @@ If you want to test in debug mode, which allows you to test step by step and sho
 ```bash
 yarn test --debug
 ```
+
+### Running Tests Locally or on Your Own Supabase
+
+If you'd like to run tests locally or on your own Supabase setup, follow these steps:
+
+1. Set up (Local) Supabase:
+
+Ensure you've created a project on Supabase.
+Set up your database schema and initial data in your Supabase project.
+
+2. Configure Environment Variables:
+
+Create a .env.local file in the root directory of your project.
+Set the following environment variables based on your Supabase project:
+
+NEXT_PUBLIC_TESTING=true
+NEXT_PUBLIC_TESTING_SUPABASE_URL=[your_supabase_project_url]
+NEXT_PUBLIC_TESTING_SUPABASE_ANON_KEY=[your_supabase_anon_key]
+NEXT_PUBLIC_TESTING_OPENAI_API_KEY=[your_openai_api_key]
+
+This setup will enable you to run and test your Tin Can Habit Tracker project in a local environment or on your customized Supabase setup, ensuring everything works perfectly.
