@@ -46,9 +46,11 @@ yarn
 
 Before running the application, configure the required environment variables in a .env file based on .env.example:
 
-NEXT_PUBLIC_SUPABASE_URL: URL to your Supabase project.
-NEXT_PUBLIC_SUPABASE_ANON_KEY: Anonymous key for accessing Supabase.
-NEXT_PUBLIC_OPENAI_API_KEY: API key for using OpenAI services.
+```
+NEXT_PUBLIC_SUPABASE_URL=[URL to your Supabase project]
+NEXT_PUBLIC_SUPABASE_ANON_KEY=[Anonymous key for accessing Supabase]
+NEXT_PUBLIC_OPENAI_API_KEY=[API key for using OpenAI services]
+```
 
 ## Running the Application
 
@@ -89,9 +91,11 @@ Set up your database schema and initial data in your Supabase project.
 Create a .env.local file in the root directory of your project.
 Set the following environment variables based on your Supabase project:
 
+```
 NEXT_PUBLIC_TESTING=true
 NEXT_PUBLIC_TESTING_SUPABASE_URL=[your_supabase_project_url]
 NEXT_PUBLIC_TESTING_SUPABASE_ANON_KEY=[your_supabase_anon_key]
 NEXT_PUBLIC_TESTING_OPENAI_API_KEY=[your_openai_api_key]
+```
 
 This setup will enable you to run and test your Tin Can Habit Tracker project in a local environment or on your customized Supabase setup, ensuring everything works perfectly.
