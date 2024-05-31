@@ -10,20 +10,26 @@ Welcome to the Tin Can Habit Tracker! This project leverages Next.js, TypeScript
 ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white) ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white) ![ChatGPT](https://img.shields.io/badge/chatGPT-74aa9c?style=for-the-badge&logo=openai&logoColor=white)
 
 - [Tin Can Habit Tracker](#tin-can-habit-tracker)
+  - [Live Demo](#live-demo)
   - [Features](#features)
   - [Screenshots](#screenshots)
-    - [Login](#login)
     - [Manage](#manage)
     - [Report](#report)
     - [Profile](#profile)
     - [Social](#social)
-  - [Live Demo](#live-demo)
+  - [Live Demo](#live-demo-1)
   - [Installation](#installation)
   - [Environment Variables](#environment-variables)
   - [Running the Application](#running-the-application)
   - [Running Tests](#running-tests)
     - [Running Tests Locally or on Your Own Supabase](#running-tests-locally-or-on-your-own-supabase)
 
+
+## Live Demo
+
+Visit our official deployment website [tincan-habit-tracker.vercel.app](https://tincan-habit-tracker.vercel.app) for live demo.
+
+Note: You must sign up before logging in!
 
 ## Features
 
@@ -39,10 +45,6 @@ Welcome to the Tin Can Habit Tracker! This project leverages Next.js, TypeScript
   - **Share to Social Media**: Share progress screenshots of your "pet can" on external social media to enhance visual sharing and interaction.
 
 ## Screenshots
-
-
-
-### Login
 
 ![](./screenshots/login.png)
 
