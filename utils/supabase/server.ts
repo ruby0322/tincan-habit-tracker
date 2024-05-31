@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 
 export const createClient = () => {
   const cookieStore = cookies();
-
+  
   return createServerClient(
     process.env.NEXT_PUBLIC_TESTING === 'true' ? process.env.NEXT_PUBLIC_TESTING_SUPABASE_URL! : process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_TESTING === 'true' ? process.env.NEXT_PUBLIC_TESTING_SUPABASE_ANON_KEY! : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

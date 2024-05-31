@@ -1,17 +1,35 @@
 # Tin Can Habit Tracker
 
+![](./screenshots/Mobile%20App%20Presentation.png)
+
 Welcome to the Tin Can Habit Tracker! This project leverages Next.js, TypeScript, Tailwind CSS, Shadcn, and Supabase to provide a robust solution for tracking daily habits. It's designed to be simple, intuitive, and effective for personal productivity enthusiasts.
 
 [![Playwright Tests](https://github.com/ruby0322/tincan-habit-tracker/actions/workflows/playwright.yml/badge.svg)](https://github.com/ruby0322/tincan-habit-tracker/actions/workflows/playwright.yml)
 
+
+![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white) ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white) ![ChatGPT](https://img.shields.io/badge/chatGPT-74aa9c?style=for-the-badge&logo=openai&logoColor=white)
+
 - [Tin Can Habit Tracker](#tin-can-habit-tracker)
-  - [Features](#features)
   - [Live Demo](#live-demo)
+  - [Features](#features)
+  - [Screenshots](#screenshots)
+    - [Manage](#manage)
+    - [Report](#report)
+    - [Profile](#profile)
+    - [Social](#social)
+  - [Live Demo](#live-demo-1)
   - [Installation](#installation)
   - [Environment Variables](#environment-variables)
   - [Running the Application](#running-the-application)
   - [Running Tests](#running-tests)
+    - [Running Tests Locally or on Your Own Supabase](#running-tests-locally-or-on-your-own-supabase)
 
+
+## Live Demo
+
+Visit our official deployment website [tincan-habit-tracker.vercel.app](https://tincan-habit-tracker.vercel.app) for live demo.
+
+Note: You must sign up before logging in!
 
 ## Features
 
@@ -26,6 +44,31 @@ Welcome to the Tin Can Habit Tracker! This project leverages Next.js, TypeScript
   - **Join Public Habits**: Participate in public habits created by others and add them to your habit collection.
   - **Share to Social Media**: Share progress screenshots of your "pet can" on external social media to enhance visual sharing and interaction.
 
+## Screenshots
+
+![](./screenshots/login.png)
+
+### Manage
+
+![](./screenshots/manage.png)
+
+### Report
+
+![](./screenshots/report.png)
+
+### Profile
+
+![](./screenshots/profile.png)
+
+![](./screenshots/following-list.png)
+
+### Social
+
+![](./screenshots/social.png)
+
+![](./screenshots/social-post.png)
+
+![](./screenshots/emojis.png)
 
 ## Live Demo
 
@@ -45,9 +88,11 @@ yarn
 
 Before running the application, configure the required environment variables in a .env file based on .env.example:
 
-NEXT_PUBLIC_SUPABASE_URL: URL to your Supabase project.
-NEXT_PUBLIC_SUPABASE_ANON_KEY: Anonymous key for accessing Supabase.
-NEXT_PUBLIC_OPENAI_API_KEY: API key for using OpenAI services.
+```
+NEXT_PUBLIC_SUPABASE_URL=[URL to your Supabase project]
+NEXT_PUBLIC_SUPABASE_ANON_KEY=[Anonymous key for accessing Supabase]
+NEXT_PUBLIC_OPENAI_API_KEY=[API key for using OpenAI services]
+```
 
 ## Running the Application
 
@@ -73,3 +118,26 @@ If you want to test in debug mode, which allows you to test step by step and sho
 ```bash
 yarn test --debug
 ```
+
+### Running Tests Locally or on Your Own Supabase
+
+If you'd like to run tests locally or on your own Supabase setup, follow these steps:
+
+1. Set up (Local) Supabase:
+
+Ensure you've created a project on Supabase.
+Set up your database schema and initial data in your Supabase project.
+
+2. Configure Environment Variables:
+
+Create a .env.local file in the root directory of your project.
+Set the following environment variables based on your Supabase project:
+
+```
+NEXT_PUBLIC_TESTING=true
+NEXT_PUBLIC_TESTING_SUPABASE_URL=[your_supabase_project_url]
+NEXT_PUBLIC_TESTING_SUPABASE_ANON_KEY=[your_supabase_anon_key]
+NEXT_PUBLIC_TESTING_OPENAI_API_KEY=[your_openai_api_key]
+```
+
+This setup will enable you to run and test your Tin Can Habit Tracker project in a local environment or on your customized Supabase setup, ensuring everything works perfectly.
