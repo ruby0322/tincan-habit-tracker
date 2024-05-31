@@ -1,11 +1,22 @@
 # Tin Can Habit Tracker
 
+![](./screenshots/Mobile%20App%20Presentation.png)
+
 Welcome to the Tin Can Habit Tracker! This project leverages Next.js, TypeScript, Tailwind CSS, Shadcn, and Supabase to provide a robust solution for tracking daily habits. It's designed to be simple, intuitive, and effective for personal productivity enthusiasts.
 
 [![Playwright Tests](https://github.com/ruby0322/tincan-habit-tracker/actions/workflows/playwright.yml/badge.svg)](https://github.com/ruby0322/tincan-habit-tracker/actions/workflows/playwright.yml)
 
+
+![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white) ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white) ![ChatGPT](https://img.shields.io/badge/chatGPT-74aa9c?style=for-the-badge&logo=openai&logoColor=white)
+
 - [Tin Can Habit Tracker](#tin-can-habit-tracker)
   - [Features](#features)
+  - [Screenshots](#screenshots)
+    - [Login](#login)
+    - [Manage](#manage)
+    - [Report](#report)
+    - [Profile](#profile)
+    - [Social](#social)
   - [Live Demo](#live-demo)
   - [Installation](#installation)
   - [Environment Variables](#environment-variables)
@@ -27,6 +38,35 @@ Welcome to the Tin Can Habit Tracker! This project leverages Next.js, TypeScript
   - **Join Public Habits**: Participate in public habits created by others and add them to your habit collection.
   - **Share to Social Media**: Share progress screenshots of your "pet can" on external social media to enhance visual sharing and interaction.
 
+## Screenshots
+
+
+
+### Login
+
+![](./screenshots/login.png)
+
+### Manage
+
+![](./screenshots/manage.png)
+
+### Report
+
+![](./screenshots/report.png)
+
+### Profile
+
+![](./screenshots/profile.png)
+
+![](./screenshots/following-list.png)
+
+### Social
+
+![](./screenshots/social.png)
+
+![](./screenshots/social-post.png)
+
+![](./screenshots/emojis.png)
 
 ## Live Demo
 
