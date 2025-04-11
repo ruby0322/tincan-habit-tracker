@@ -1,7 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: ['oaidalleapiprodscus.blob.core.windows.net', 'dmbkhireuarjpvecjmds.supabase.co', 'jmgowbnhsejplwjfhpnv.supabase.co'],
+        domains: [
+            'oaidalleapiprodscus.blob.core.windows.net',
+            'dmbkhireuarjpvecjmds.supabase.co',
+            'jmgowbnhsejplwjfhpnv.supabase.co',
+            'yrgkqhwyufgrhibogxun.supabase.co'
+        ],
     },
     experimental: {
         serverActions: {
